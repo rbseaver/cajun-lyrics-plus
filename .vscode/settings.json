@@ -1,0 +1,7 @@
+{
+  "dotnet.preferCSharpExtension": true,
+  "dotnet-test-explorer.testProjectPath": "**/*Tests.csproj",
+  "dotnet-test-explorer.codeLensPassed": "✓",
+  "dotnet-test-explorer.codeLensFailed": "✗",
+  "dotnet-test-explorer.codeLensSkipped": "⏭",
+}
