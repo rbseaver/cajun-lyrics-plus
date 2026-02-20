@@ -5,9 +5,9 @@ using NSubstitute;
 using RichardSzalay.MockHttp;
 using System.Net;
 
-namespace CajunLyrics.Tests
+
+namespace CajunLyrics.Tests.Unit
 {
-    [TestClass]
     public class WhenCallingCajunLyricsApi
     {
         private ServiceCollection? services;
@@ -59,7 +59,7 @@ namespace CajunLyrics.Tests
   </SearchLyricsResult>
 <SearchLyricResultArray>";
 
-        [TestInitialize]
+        [SetUp]
         public void SetUp()
         {
             mockHttpMessageHandler = new MockHttpMessageHandler();
@@ -79,7 +79,7 @@ namespace CajunLyrics.Tests
             cajunLyricsClient = provider.GetRequiredService<CajunLyricsClient>();
         }
 
-        [TestMethod]
+        [Test]
         public async Task ShouldMakeCallToDirectLyricSearch()
         {
             mockHttpMessageHandler
@@ -91,7 +91,7 @@ namespace CajunLyrics.Tests
             mockHttpMessageHandler.VerifyNoOutstandingExpectation();
         }
 
-        [TestMethod]
+        [Test]
         public async Task ShouldGetLyricsAsLyricResult()
         {
             mockHttpMessageHandler
@@ -106,12 +106,18 @@ namespace CajunLyrics.Tests
             response.Lyric.Should().Contain("Moi, j’ai pleuré équand toi t’as parti");
         }
 
-        [TestMethod]
+        [Test]
         public async Task ShouldMakeCallToSearch()
         {
             mockHttpMessageHandler.Expect(HttpMethod.Get, $"{BaseUrl}LyricSearchList.php?artist=ArtistName")
                 .Respond(HttpStatusCode.OK, "text/xml", ExpectedSearchResult);
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            mockHttpClient.Dispose();
+            mockHttpMessageHandler.Dispose();
+        }
     }
 }
