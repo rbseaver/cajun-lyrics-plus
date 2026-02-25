@@ -9,18 +9,18 @@ namespace CajunLyrics.Lib
         public int Id { get; set; }
 
         [XmlElement("LyricsUrl")]
-        public required string LyricsUrl { get; set; }
+        public string? LyricsUrl { get; set; }
 
         [XmlElement("ArtistUrl")]
-        public required string ArtistUrl { get; set; }
+        public string? ArtistUrl { get; set; }
 
         [XmlElement("Artist")]
-        public required string Artist { get; set; }
+        public string? Artist { get; set; }
 
         [XmlElement("Title")]
-        public required string Title { get; set; }
+        public string? Title { get; set; }
 
         [XmlElement("Lyric")]
-        public required string Lyric { get; set; }
+        public string? Lyric { get; set; }
     }
 }

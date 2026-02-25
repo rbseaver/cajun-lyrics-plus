@@ -1,123 +1,98 @@
-﻿using CajunLyrics.Lib;
+﻿using AutoFixture;
+using CajunLyrics.Lib;
+using CajunLyrics.Tests.Unit.TestUtilities;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using NSubstitute;
 using RichardSzalay.MockHttp;
 using System.Net;
+using System.Text;
+using System.Text.Encodings.Web;
 
 
 namespace CajunLyrics.Tests.Unit
 {
-    public class WhenCallingCajunLyricsApi
+    public class WhenCallingCajunLyricsApi : TestBase
     {
-        private ServiceCollection? services;
-        private IHttpClientFactory? httpClientFactoryMock;
-        private CajunLyricsClient? cajunLyricsClient;
-        private HttpClient? mockHttpClient;
-        private MockHttpMessageHandler? mockHttpMessageHandler;
-        private const string BaseUrl = "https://api.derp.duh/";
-
-        private const string ExpectedLyricResult = @"<?xml version='1.0' encoding='UTF-8'?>
-<GetLyricResult xmlns='http://api.cajunlyrics.com/'>
-    <Id>2891</Id>
-    <LyricsUrl>http://www.cajunlyrics.com/?lyrics=2891</LyricsUrl>
-    <ArtistUrl>http://www.cajunlyrics.com/?page=search&amp;artist=168</ArtistUrl>
-    <Artist>Dewey Balfa</Artist>
-    <Title>J’ai Pleuré</Title>
-    <Lyric>Moi, j’ai pleuré équand toi t’as parti
-        J’ai pleuré parce que j't’aimais
-        T’as pris mon sentiment
-        Et mon 'tit brin d’agrément
-        Tu m’as laissé, moi, tout seul dans l’abandon
-
-        [Instrumental]
-
-        Tu voudras, ’tit monde, toi, t’en r'venir
-        Avec moi là à la maison, mais c’est là, tu vas 'oir
-        Tu vas pleurer, pareil comment j’ai fait
-        Ça s'ra trop tard, moi j'pourras pas t'pardonner
-
-        Lyrics Provided by CajunLyrics.com
-    </Lyric>
-</GetLyricResult>
-";
-        private const string ExpectedSearchResult = @"<?xml version='1.0' encoding='UTF-8'?>
-<SearchLyricResultArray xmlns=""http://api.cajunlyrics.com/"">
-  <SearchLyricsResult>
-    <Id> ID (RESULT #1) </Id>
-    <LyricsUrl> Lyrics Page URL</LyricsUrl>
-    <ArtistUrl> Artist Page URL </ArtistUrl>
-    <Artist> Artist Name </Artist>
-    <Title> Song Title </Title>
-  </SearchLyricsResult>
-  <SearchLyricsResult>
-    <Id> ID (RESULT #2) </Id>
-    <LyricsUrl> Lyrics Page URL</LyricsUrl>
-    <ArtistUrl> Artist Page URL </ArtistUrl>
-    <Artist> Artist Name </Artist>
-    <Title> Song Title </Title>
-  </SearchLyricsResult>
-<SearchLyricResultArray>";
+        private CajunLyricsService cajunLyricsService;
+        private ServiceCollection services;
+        private Fixture fixture;
 
         [SetUp]
         public void SetUp()
         {
-            mockHttpMessageHandler = new MockHttpMessageHandler();
-            mockHttpClient = new HttpClient(mockHttpMessageHandler)
-            {
-                BaseAddress = new Uri(BaseUrl)
-            };
-
-            httpClientFactoryMock = Substitute.For<IHttpClientFactory>();
-            httpClientFactoryMock.CreateClient(Arg.Any<string>()).Returns(mockHttpClient);
-
+            fixture = new Fixture();
             services = new ServiceCollection();
-            services.AddSingleton(httpClientFactoryMock);
-            services.AddTransient<CajunLyricsClient>();
+            services.AddSingleton(MockHttpClientFactory);
+            services.AddTransient<CajunLyricsService>();
             var provider = services.BuildServiceProvider();
 
-            cajunLyricsClient = provider.GetRequiredService<CajunLyricsClient>();
-        }
-
-        [Test]
-        public async Task ShouldMakeCallToDirectLyricSearch()
-        {
-            mockHttpMessageHandler
-                .Expect(HttpMethod.Get, $"{BaseUrl}LyricDirectSearch.php?artist=Dewey%20Balfa&title=J%27ai%20Pleur%C3%A9")
-                .Respond(HttpStatusCode.OK, "text/xml", ExpectedLyricResult);
-
-            await cajunLyricsClient.GetSongLyricsAsync("Dewey Balfa", "J'ai Pleuré");
-
-            mockHttpMessageHandler.VerifyNoOutstandingExpectation();
+            cajunLyricsService = provider.GetRequiredService<CajunLyricsService>();
         }
 
         [Test]
         public async Task ShouldGetLyricsAsLyricResult()
         {
-            mockHttpMessageHandler
-                .Expect(HttpMethod.Get, $"{BaseUrl}LyricDirectSearch.php?artist=Dewey%20Balfa&title=J%27ai%20Pleur%C3%A9")
-                .Respond(HttpStatusCode.OK, "text/xml", ExpectedLyricResult);
+            MockHttpMessageHandler
+                .Expect(
+                    HttpMethod.Get,
+                    $"{MockHttpClient.BaseAddress}LyricDirectSearch.php?artist=Dewey%20Balfa&title=J%27ai%20Pleur%C3%A9")
+                .Respond(HttpStatusCode.OK, "text/xml", TestData.ExpectedLyricResult);
 
-            LyricResult response = await cajunLyricsClient.GetSongLyricsAsync("Dewey Balfa", "J'ai Pleuré");
+            LyricResult result = await cajunLyricsService.GetSongLyricsAsync("Dewey Balfa", "J'ai Pleuré");
 
-            response.Id.Should().Be(2891);
-            response.Artist.Should().Be("Dewey Balfa");
-            response.Title.Should().Be("J’ai Pleuré");
-            response.Lyric.Should().Contain("Moi, j’ai pleuré équand toi t’as parti");
+            result.Should()
+                .BeEquivalentTo(
+                    new LyricResult
+                    {
+                        Id = 2891,
+                        Artist = "Dewey Balfa",
+                        Title = "J’ai Pleuré",
+                        Lyric = "Lyrics go here",
+                        LyricsUrl = "http://www.cajunlyrics.com/?lyrics=2891",
+                        ArtistUrl = "http://www.cajunlyrics.com/?page=search&artist=168"
+                    },
+                    options => options.ExcludingMissingMembers());
+
+            MockHttpMessageHandler.VerifyNoOutstandingExpectation();
         }
 
         [Test]
-        public async Task ShouldMakeCallToSearch()
+        public async Task ShouldGetSearchResults()
         {
-            mockHttpMessageHandler.Expect(HttpMethod.Get, $"{BaseUrl}LyricSearchList.php?artist=ArtistName")
-                .Respond(HttpStatusCode.OK, "text/xml", ExpectedSearchResult);
-        }
+            var artist = fixture.Create<string>();
+            var title = fixture.Create<string>();
 
-        [TearDown]
-        public void TearDown()
-        {
-            mockHttpClient.Dispose();
-            mockHttpMessageHandler.Dispose();
+            MockHttpMessageHandler.Expect(
+                HttpMethod.Get,
+                $"{MockHttpClient.BaseAddress}LyricSearchList.php?artist={artist}&title={title}")
+                .Respond(HttpStatusCode.OK, "text/xml", TestData.ExpectedSearchResult);
+
+            LyricSearchResult results = await cajunLyricsService.GetSearchResultsAsync(artist, title);
+
+            results.Should()
+                .BeEquivalentTo(
+                    new LyricSearchResult
+                    {
+                        LyricResults =
+                            [
+                                    new()
+                                    {
+                                        Id = TestData.Id[0],
+                                        Artist = TestData.Artist[0],
+                                        Title = TestData.Title[0],
+                                        LyricsUrl = TestData.LyricsUrl[0].Replace("&amp;", "&"),
+                                        ArtistUrl = TestData.ArtistUrl[0].Replace("&amp;", "&")
+                                    },
+                                    new()
+                                    {
+                                        Id = TestData.Id[1],
+                                        Artist = TestData.Artist[1],
+                                        Title = TestData.Title[1],
+                                        LyricsUrl = TestData.LyricsUrl[1].Replace("&amp;", "&"),
+                                        ArtistUrl = TestData.ArtistUrl[1].Replace("&amp;", "&")
+                                    }
+                                ]
+                    });
         }
     }
 }

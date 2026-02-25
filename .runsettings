@@ -2,7 +2,7 @@
 <RunSettings>
   <CodeCoverage>
     <Exclude>
-      <ModuleName>CajunLyrics.Tests.Unit.dll</ModuleName>
-    </Exclude>
+      <ModuleName>.*CajunLyrics.Tests.Unit.dll</ModuleName>
+	</Exclude>
   </CodeCoverage>
 </RunSettings>
