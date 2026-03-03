@@ -59,4 +59,25 @@ namespace CajunLyrics.Tests.Unit
             }
         }
     }
+
+    public class Artist(Fixture fixture)
+    {
+        readonly Fixture fixture = fixture;
+
+        public string FirstName
+        {
+            get
+            {
+                return fixture.Create<string>();
+            }
+        }
+
+        public string LastName
+        {
+            get
+            {
+                return fixture.Create<string>();
+            }
+        }
+    }
 }

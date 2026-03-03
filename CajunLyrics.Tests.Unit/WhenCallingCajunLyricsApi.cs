@@ -35,21 +35,21 @@ namespace CajunLyrics.Tests.Unit
             MockHttpMessageHandler
                 .Expect(
                     HttpMethod.Get,
-                    $"{MockHttpClient.BaseAddress}LyricDirectSearch.php?artist=Dewey%20Balfa&title=J%27ai%20Pleur%C3%A9")
+                    $"{MockHttpClient.BaseAddress}LyricDirectSearch.php?artist={TestData.Artist[0]}&title={TestData.Title[0]}")
                 .Respond(HttpStatusCode.OK, "text/xml", TestData.ExpectedLyricResult);
 
-            LyricResult result = await cajunLyricsService.GetSongLyricsAsync("Dewey Balfa", "J'ai Pleuré");
+            LyricResult result = await cajunLyricsService.GetSongLyricsAsync(TestData.Artist[0], TestData.Title[0]);
 
             result.Should()
                 .BeEquivalentTo(
                     new LyricResult
                     {
                         Id = 2891,
-                        Artist = "Dewey Balfa",
-                        Title = "J’ai Pleuré",
-                        Lyric = "Lyrics go here",
-                        LyricsUrl = "http://www.cajunlyrics.com/?lyrics=2891",
-                        ArtistUrl = "http://www.cajunlyrics.com/?page=search&artist=168"
+                        Artist = TestData.Artist[0],
+                        Title = TestData.Title[0],
+                        Lyric = TestData.Lyric,
+                        LyricsUrl = TestData.LyricsUrl[0].Replace("&amp;","&"),
+                        ArtistUrl = TestData.ArtistUrl[0].Replace("&amp;", "&"),
                     },
                     options => options.ExcludingMissingMembers());
 
@@ -59,8 +59,8 @@ namespace CajunLyrics.Tests.Unit
         [Test]
         public async Task ShouldGetSearchResults()
         {
-            var artist = fixture.Create<string>();
-            var title = fixture.Create<string>();
+            var artist = TestData.Artist[0];
+            var title = TestData.Title[0];
 
             MockHttpMessageHandler.Expect(
                 HttpMethod.Get,
