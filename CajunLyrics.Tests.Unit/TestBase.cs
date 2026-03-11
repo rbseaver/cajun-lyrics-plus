@@ -77,33 +77,31 @@ namespace CajunLyrics.Tests.Unit
         {
             var lyric = includeLyric ? baseFixture.Create<string>() : null;
 
-            IList<LyricResult> lyricResults = [
-                baseFixture.Build<LyricResult>()
+            if (count == 1)
+            {
+                return [CreateLyricResult(artist, title, lyric)];
+            }
+
+            var lyricResults = new List<LyricResult>();
+
+            for (int i = 1; i < count; i++)
+            {
+                lyricResults.Add(CreateLyricResult(artist, title, lyric));
+            }
+
+            return lyricResults;
+        }
+
+        private LyricResult CreateLyricResult(string artist, string title, string? lyric)
+        {
+            return baseFixture.Build<LyricResult>()
                 .With(l => l.Id, baseFixture.Create<int>())
                 .With(l => l.LyricsUrl, $"{baseFixture.Create<Uri>()}?lyrics={baseFixture.Create<int>()}")
                 .With(l => l.ArtistUrl, $"{baseFixture.Create<Uri>()}?page=search&amp;artist={baseFixture.Create<int>()}")
                 .With(l => l.Artist, artist)
                 .With(l => l.Title, title)
                 .With(l => l.Lyric, () => lyric)
-                .Create()
-            ];
-
-            if (count > 1)
-            {
-                for (int i = 1; i < count; i++)
-                {
-                    lyricResults.Add(
-                        baseFixture.Build<LyricResult>()
-                        .With(l => l.Id, baseFixture.Create<int>())
-                        .With(l => l.LyricsUrl, $"{baseFixture.Create<Uri>()}?lyrics={baseFixture.Create<int>()}")
-                        .With(l => l.ArtistUrl, $"{baseFixture.Create<Uri>()}?page=search&amp;artist={baseFixture.Create<int>()}")
-                        .With(l => l.Artist, artist)
-                        .With(l => l.Title, title)
-                        .With(l => l.Lyric, () => lyric)
-                        .Create());
-                }
-            }
-            return lyricResults;
+                .Create();
         }
 
         protected static string BuildLyricResultXmlString(LyricResult result)
