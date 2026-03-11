@@ -73,8 +73,10 @@ namespace CajunLyrics.Tests.Unit
             }
         }
 
-        protected IList<LyricResult> BuildLyricResults(string artist, string title, int count = 1)
+        protected IList<LyricResult> BuildLyricResults(string artist, string title, bool includeLyric = true, int count = 1)
         {
+            var lyric = includeLyric ? baseFixture.Create<string>() : null;
+
             IList<LyricResult> lyricResults = [
                 baseFixture.Build<LyricResult>()
                 .With(l => l.Id, baseFixture.Create<int>())
@@ -82,7 +84,7 @@ namespace CajunLyrics.Tests.Unit
                 .With(l => l.ArtistUrl, $"{baseFixture.Create<Uri>()}?page=search&amp;artist={baseFixture.Create<int>()}")
                 .With(l => l.Artist, artist)
                 .With(l => l.Title, title)
-                .With(l => l.Lyric, () => null)
+                .With(l => l.Lyric, () => lyric)
                 .Create()
             ];
 
@@ -97,7 +99,7 @@ namespace CajunLyrics.Tests.Unit
                         .With(l => l.ArtistUrl, $"{baseFixture.Create<Uri>()}?page=search&amp;artist={baseFixture.Create<int>()}")
                         .With(l => l.Artist, artist)
                         .With(l => l.Title, title)
-                        .With(l => l.Lyric, () => null)
+                        .With(l => l.Lyric, () => lyric)
                         .Create());
                 }
             }

@@ -24,7 +24,7 @@ namespace CajunLyrics.Tests.Unit
         {
             var artist = fixture.Create<string>();
             var title = fixture.Create<string>();
-            var lyricResult = BuildLyricResults(artist, title).First();
+            var lyricResult = BuildLyricResults(artist, title, true).First();
             var lyricResultXmlString = BuildLyricResultXmlString(lyricResult);
             MockHttpMessageHandler
                 .Expect(
@@ -42,7 +42,7 @@ namespace CajunLyrics.Tests.Unit
         {
             var artist = fixture.Create<string>();
             var title = fixture.Create<string>();
-            IList<LyricResult> lyricResults = BuildLyricResults(artist, title, 5);
+            IList<LyricResult> lyricResults = BuildLyricResults(artist, title, false, 5);
             var lyricSearchResult = fixture.Build<LyricSearchResult>()
                 .With(s => s.LyricResults, lyricResults)
                 .Create();
