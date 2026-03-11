@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace CajunLyrics.Lib
+namespace CajunLyrics.Lib.Models
 {
     [XmlRoot("GetLyricResult", Namespace = "http://api.cajunlyrics.com/")]
     public class LyricResult

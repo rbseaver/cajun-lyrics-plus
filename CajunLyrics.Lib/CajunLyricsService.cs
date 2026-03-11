@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using CajunLyrics.Lib.Models;
+using System.Xml.Serialization;
 
 namespace CajunLyrics.Lib
 {
