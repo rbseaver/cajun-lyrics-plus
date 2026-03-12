@@ -23,9 +23,9 @@ namespace CajunLyrics.Lib
 
             return result;
         }
-        public async Task<LyricSearchResult> GetSearchResultsAsync(string artist, string title)
+        public async Task<LyricSearchResult> GetSearchResultsAsync(LyricSearchRequest request)
         {
-            var xml = await FetchXmlResponse(LyricSearchResultsEndpoint, artist, title);
+            var xml = await FetchXmlResponse(LyricSearchResultsEndpoint, request.Artist, request.Title, request.Language);
 
             var serializer = new XmlSerializer(typeof(LyricSearchResult));
 
@@ -37,11 +37,18 @@ namespace CajunLyrics.Lib
             return result;
         }
 
-        private async Task<string> FetchXmlResponse(string endpointUri, string artist, string title)
+        private async Task<string> FetchXmlResponse(string resource, string artist, string title, string? language = null)
         {
             var client = httpClientFactory.CreateClient(nameof(CajunLyricsService));
-            
-            var response = await client.GetAsync($"{endpointUri}?artist={artist}&title={title}");
+
+            var requestUri = $"{resource}?artist={artist}&title={title}";
+
+            if (language != null)
+            {
+                requestUri += $"&lf={language}";
+            }
+
+            var response = await client.GetAsync(requestUri);
 
             response.EnsureSuccessStatusCode();
 
