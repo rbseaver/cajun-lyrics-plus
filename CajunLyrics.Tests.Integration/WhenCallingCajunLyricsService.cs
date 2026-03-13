@@ -1,0 +1,63 @@
+﻿using CajunLyrics.Lib.Models;
+using CajunLyrics.Lib.Services;
+using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
+using System.Runtime.CompilerServices;
+
+namespace CajunLyrics.Tests.Integration
+{
+    public class WhenCallingCajunLyricsService
+    {
+        private CajunLyricsService cajunLyricsService;
+
+        [SetUp]
+        public void Setup()
+        {
+            var services = new ServiceCollection();
+            services.AddHttpClient(
+                nameof(CajunLyricsService),
+                client =>
+                {
+                    client.BaseAddress = new Uri("https://api.cajunlyrics.com");
+                });
+            services.AddScoped<CajunLyricsService>();
+            var provider = services.BuildServiceProvider();
+            cajunLyricsService = provider.GetRequiredService<CajunLyricsService>();
+        }
+
+        [Test]
+        public async Task ShouldRetrieveLyrics()
+        {
+            var result = await cajunLyricsService.GetSongLyricsAsync(
+                new LyricSearchRequest { Artist = "feufollet", Title = "Blues de Dix Ans" });
+
+            result.Should().NotBeNull();
+            result.Should()
+                .BeEquivalentTo(
+                    new LyricResult
+                    {
+                        Artist = "Feufollet",
+                        Title = "Blues De Dix Ans",
+                        LyricsUrl = "http://www.cajunlyrics.com/?lyrics=512",
+                        ArtistUrl = "http://www.cajunlyrics.com/?page=search&artist=16",
+                        Id = 512,
+                        Lyric = @"Dix ans, dix ans, c’est l’ans pour espérer
+Avec une pierre tout le temps pour mon oreiller
+Dix ans, dix ans, c’est l’ans pour misérer
+Mais pour quelque chose que moi j’avais pas fait
+
+C’est toi qui m’a accuse, c’est lui qui m’a condamne
+Et lui il était content de m’envoyer
+Ils m’ont mal traite, quand même je les ai demande
+De me pardonner pour ca j’avais pas fait
+
+Quand ils m’ont pardonne, après ce grand donne
+Quand tu m’a vu tu t’es mis à pleurer
+Toi t’as réalisé le mal tu m’avais fais
+Et comment gros que j’avais misérer
+
+Lyrics Provided by CajunLyrics.com"
+                    }, opts => opts.IgnoringNewlineStyle());
+        }
+    }
+}

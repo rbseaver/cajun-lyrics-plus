@@ -5,5 +5,6 @@
     <File Path=".runsettings" />
   </Folder>
   <Project Path="CajunLyrics.Lib/CajunLyrics.Lib.csproj" />
+  <Project Path="CajunLyrics.Tests.Integration/CajunLyrics.Tests.Integration.csproj" Id="bf3d8dd2-d3db-4e57-971e-be26279f51a9" />
   <Project Path="CajunLyrics.Tests.Unit/CajunLyrics.Tests.Unit.csproj" Id="18f97261-614d-45e7-bd25-6fa30caf726e" />
 </Solution>
