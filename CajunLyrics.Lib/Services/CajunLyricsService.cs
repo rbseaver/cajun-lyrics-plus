@@ -1,18 +1,16 @@
-﻿using CajunLyrics.Lib.Models;
+﻿using CajunLyrics.Lib.Helpers;
+using CajunLyrics.Lib.Models;
 using System.Xml.Serialization;
 
-namespace CajunLyrics.Lib
+namespace CajunLyrics.Lib.Services
 {
     public class CajunLyricsService(IHttpClientFactory httpClientFactory)
     {
-        private const string LyricResultEndpoint = "LyricDirectSearch.php";
-        private const string LyricSearchResultsEndpoint = "LyricSearchList.php";
-
         private readonly IHttpClientFactory httpClientFactory = httpClientFactory;
 
         public async Task<LyricResult> GetSongLyricsAsync(LyricSearchRequest request)
         {
-            var xml = await FetchXmlResponse(LyricResultEndpoint, request);
+            var xml = await FetchXmlResponse("LyricDirectSearch.php", request);
 
             var serializer = new XmlSerializer(typeof(LyricResult));
 
@@ -25,7 +23,7 @@ namespace CajunLyrics.Lib
         }
         public async Task<LyricSearchResult> GetSearchResultsAsync(LyricSearchRequest request)
         {
-            var xml = await FetchXmlResponse(LyricSearchResultsEndpoint, request);
+            var xml = await FetchXmlResponse("LyricSearchList.php", request);
 
             var serializer = new XmlSerializer(typeof(LyricSearchResult));
 
@@ -41,18 +39,7 @@ namespace CajunLyrics.Lib
         {
             var client = httpClientFactory.CreateClient(nameof(CajunLyricsService));
 
-            var queryParams = new List<string>
-            {
-                $"artist={request.Artist}",
-                $"title={request.Title}"
-            };
-
-            if (request.Language != null)
-            {
-                queryParams.Add($"lf={request.Language}");
-            };
-
-            var requestUri = $"{resource}?{string.Join("&", queryParams)}";
+            string requestUri = RequestUtilities.BuildRequestUri(resource, request);
 
             var response = await client.GetAsync(requestUri);
 

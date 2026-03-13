@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using CajunLyrics.Lib;
 using CajunLyrics.Lib.Models;
+using CajunLyrics.Lib.Services;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using RichardSzalay.MockHttp;
@@ -134,7 +135,7 @@ namespace CajunLyrics.Tests.Unit
 
             }
             var footer = "</SearchLyricResultArray>";
-            return header + body.ToString() + footer;
+            return $"{header}{body}{footer}";
         }
     }
 
