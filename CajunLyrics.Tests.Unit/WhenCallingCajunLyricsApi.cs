@@ -26,6 +26,12 @@ namespace CajunLyrics.Tests.Unit
             var artist = fixture.Create<string>();
             var title = fixture.Create<string>();
 
+            var lyricSearchRequest = new LyricSearchRequest
+            {
+                Artist = artist,
+                Title = title
+            };
+
             var lyricResult = BuildLyricResults(artist, title, true).First();
             var lyricResultXmlString = BuildLyricResultXmlString(lyricResult);
             
@@ -36,7 +42,7 @@ namespace CajunLyrics.Tests.Unit
                 .Respond(HttpStatusCode.OK, "text/xml", lyricResultXmlString);
 
             // Act
-            LyricResult result = await sut.GetSongLyricsAsync(artist, title);
+            LyricResult result = await sut.GetSongLyricsAsync(lyricSearchRequest);
 
             // Assert
             result.Should().BeEquivalentTo(lyricResult);

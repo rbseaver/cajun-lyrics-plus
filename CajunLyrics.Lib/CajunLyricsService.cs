@@ -10,9 +10,9 @@ namespace CajunLyrics.Lib
 
         private readonly IHttpClientFactory httpClientFactory = httpClientFactory;
 
-        public async Task<LyricResult> GetSongLyricsAsync(string artist, string title)
+        public async Task<LyricResult> GetSongLyricsAsync(LyricSearchRequest request)
         {
-            var xml = await FetchXmlResponse(LyricResultEndpoint, artist, title);
+            var xml = await FetchXmlResponse(LyricResultEndpoint, request);
 
             var serializer = new XmlSerializer(typeof(LyricResult));
 
@@ -25,28 +25,34 @@ namespace CajunLyrics.Lib
         }
         public async Task<LyricSearchResult> GetSearchResultsAsync(LyricSearchRequest request)
         {
-            var xml = await FetchXmlResponse(LyricSearchResultsEndpoint, request.Artist, request.Title, request.Language);
+            var xml = await FetchXmlResponse(LyricSearchResultsEndpoint, request);
 
             var serializer = new XmlSerializer(typeof(LyricSearchResult));
 
             using var reader = new StringReader(xml);
 
             var result = serializer.Deserialize(reader) as LyricSearchResult ??
-                throw new InvalidOperationException("Failed do deserialize LyricSearchResult from XML");
+                throw new InvalidOperationException("Failed to deserialize LyricSearchResult from XML");
 
             return result;
         }
 
-        private async Task<string> FetchXmlResponse(string resource, string artist, string title, string? language = null)
+        private async Task<string> FetchXmlResponse(string resource, LyricSearchRequest request)
         {
             var client = httpClientFactory.CreateClient(nameof(CajunLyricsService));
 
-            var requestUri = $"{resource}?artist={artist}&title={title}";
-
-            if (language != null)
+            var queryParams = new List<string>
             {
-                requestUri += $"&lf={language}";
-            }
+                $"artist={request.Artist}",
+                $"title={request.Title}"
+            };
+
+            if (request.Language != null)
+            {
+                queryParams.Add($"lf={request.Language}");
+            };
+
+            var requestUri = $"{resource}?{string.Join("&", queryParams)}";
 
             var response = await client.GetAsync(requestUri);
 
