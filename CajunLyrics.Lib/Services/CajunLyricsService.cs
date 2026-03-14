@@ -1,5 +1,6 @@
 ﻿using CajunLyrics.Lib.Helpers;
 using CajunLyrics.Lib.Models;
+using System.Text;
 using System.Xml.Serialization;
 
 namespace CajunLyrics.Lib.Services
@@ -40,12 +41,14 @@ namespace CajunLyrics.Lib.Services
             var client = httpClientFactory.CreateClient(nameof(CajunLyricsService));
 
             string requestUri = RequestUtilities.BuildRequestUri(resource, request);
-
+          
             var response = await client.GetAsync(requestUri);
-
+            
             response.EnsureSuccessStatusCode();
 
-            var xml = await response.Content.ReadAsStringAsync();
+            var bytes = await response.Content.ReadAsByteArrayAsync();
+
+            var xml = Encoding.UTF8.GetString(bytes);
 
             return xml;
         }

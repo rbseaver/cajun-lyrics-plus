@@ -35,11 +35,15 @@ namespace CajunLyrics.Tests.Unit
             var lyricResult = BuildLyricResults(artist, title, true).First();
             var lyricResultXmlString = BuildLyricResultXmlString(lyricResult);
             
+            var responseHeaders = new Dictionary<string, string>
+            {
+                { "Content-Type", "text/xml; charset=UTF-8" }
+            };
             MockHttpMessageHandler
                 .Expect(
                     HttpMethod.Get,
                     $"{MockHttpClient.BaseAddress}LyricDirectSearch.php?artist={artist}&title={title}")
-                .Respond(HttpStatusCode.OK, "text/xml", lyricResultXmlString);
+                .Respond(responseHeaders, "text/xml", lyricResultXmlString);
 
             // Act
             LyricResult result = await sut.GetSongLyricsAsync(lyricSearchRequest);
@@ -67,11 +71,14 @@ namespace CajunLyrics.Tests.Unit
                 .With(s => s.LyricResults, lyricResults)
                 .Create();
             var lyricSearchResultString = BuildSearchResultXmlString(lyricSearchResult);
-            
+            var responseHeaders = new Dictionary<string, string>
+            {
+                { "Content-Type", "text/xml; charset=Off" }
+            };
             MockHttpMessageHandler.Expect(
                 HttpMethod.Get,
                 $"{MockHttpClient.BaseAddress}LyricSearchList.php?artist={artist}&title={title}")
-                .Respond(HttpStatusCode.OK, "text/xml", lyricSearchResultString);
+                .Respond(responseHeaders, "text/xml", lyricSearchResultString);
 
             // Act
             LyricSearchResult results = await sut.GetSearchResultsAsync(lyricSearchRequest);

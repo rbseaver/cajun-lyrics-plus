@@ -59,5 +59,25 @@ Et comment gros que j’avais misérer
 Lyrics Provided by CajunLyrics.com"
                     }, opts => opts.IgnoringNewlineStyle());
         }
+
+        [Test]
+        public async Task ShouldRetrieveSearchResults()
+        {
+            var result = await cajunLyricsService.GetSearchResultsAsync(
+                new LyricSearchRequest { Artist = "feufollet", Title = "Blues de Dix Ans" });
+
+            result.LyricResults.Should().NotBeNull();
+            result.LyricResults.Count.Should().BeGreaterThan(0);
+            result.LyricResults.Should()
+                .ContainEquivalentOf(
+                    new LyricResult
+                    {
+                        Artist = "Feufollet",
+                        Title = "Blues De Dix Ans",
+                        LyricsUrl = "http://www.cajunlyrics.com/?lyrics=512",
+                        ArtistUrl = "http://www.cajunlyrics.com/?page=search&artist=16",
+                        Id = 512,
+                    });
+        }
     }
 }
