@@ -7,7 +7,7 @@ namespace CajunLyrics.Lib.Services
 {
     public class CajunLyricsService(IHttpClientFactory httpClientFactory)
     {
-        private static readonly IDictionary<Type, XmlSerializer> Serializers = new Dictionary<Type, XmlSerializer>
+        private static readonly Dictionary<Type, XmlSerializer> Serializers = new()
         {
             { typeof(LyricResult), new XmlSerializer(typeof(LyricResult)) },
             { typeof(LyricSearchResult), new XmlSerializer(typeof(LyricSearchResult)) }
