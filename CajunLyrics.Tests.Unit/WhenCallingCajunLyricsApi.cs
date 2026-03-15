@@ -133,7 +133,7 @@ namespace CajunLyrics.Tests.Unit
                 Title = title
             };
             var lyricSearchResult = fixture.Build<LyricSearchResult>()
-                .With(s => s.LyricResults, new List<LyricResult>())
+                .With(s => s.LyricResults, [])
                 .Create();
             var lyricSearchResultString = BuildSearchResultXmlString(lyricSearchResult);
             var responseHeaders = new Dictionary<string, string>

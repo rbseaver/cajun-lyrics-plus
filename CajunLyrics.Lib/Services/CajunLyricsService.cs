@@ -7,33 +7,30 @@ namespace CajunLyrics.Lib.Services
 {
     public class CajunLyricsService(IHttpClientFactory httpClientFactory)
     {
-        private readonly IHttpClientFactory httpClientFactory = httpClientFactory;
+        private static readonly IDictionary<Type, XmlSerializer> Serializers = new Dictionary<Type, XmlSerializer>
+        {
+            { typeof(LyricResult), new XmlSerializer(typeof(LyricResult)) },
+            { typeof(LyricSearchResult), new XmlSerializer(typeof(LyricSearchResult)) }
+        };
 
         public async Task<LyricResult> GetSongLyricsAsync(LyricSearchRequest request)
         {
-            var xml = await FetchXmlResponse("LyricDirectSearch.php", request);
-
-            var serializer = new XmlSerializer(typeof(LyricResult));
-
-            using var reader = new StringReader(xml);
-
-            var result = serializer.Deserialize(reader) as LyricResult ??
-                throw new InvalidOperationException("Failed to deserialize LyricResult from XML.");
-
-            return result;
+            return await DeserializeResultsAsync<LyricResult>("LyricDirectSearch.php", request);
         }
+
         public async Task<LyricSearchResult> GetSearchResultsAsync(LyricSearchRequest request)
         {
-            var xml = await FetchXmlResponse("LyricSearchList.php", request);
+            return await DeserializeResultsAsync<LyricSearchResult>("LyricSearchList.php", request);
+        }
 
-            var serializer = new XmlSerializer(typeof(LyricSearchResult));
+        private async Task<T> DeserializeResultsAsync<T>(string resource, LyricSearchRequest request)
+        {
+            var xml = await FetchXmlResponse(resource, request);
 
             using var reader = new StringReader(xml);
 
-            var result = serializer.Deserialize(reader) as LyricSearchResult ??
-                throw new InvalidOperationException("Failed to deserialize LyricSearchResult from XML");
-
-            return result;
+            return Serializers[typeof(T)].Deserialize(reader) is T result ? result :
+                throw new InvalidOperationException($"Failed to deserialize {typeof(T).Name} from XML");
         }
 
         private async Task<string> FetchXmlResponse(string resource, LyricSearchRequest request)
@@ -41,9 +38,9 @@ namespace CajunLyrics.Lib.Services
             var client = httpClientFactory.CreateClient(nameof(CajunLyricsService));
 
             string requestUri = RequestUtilities.BuildRequestUri(resource, request);
-          
+
             var response = await client.GetAsync(requestUri);
-            
+
             response.EnsureSuccessStatusCode();
 
             var bytes = await response.Content.ReadAsByteArrayAsync();
