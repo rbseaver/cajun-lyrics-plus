@@ -43,7 +43,7 @@ namespace CajunLyrics.Tests.Unit
                 .Expect(
                     HttpMethod.Get,
                     $"{MockHttpClient.BaseAddress}LyricDirectSearch.php?artist={artist}&title={title}")
-                .Respond(responseHeaders, "text/xml", lyricResultXmlString);
+                .Respond(responseHeaders, new StringContent(lyricResultXmlString));
 
             // Act
             LyricResult result = await sut.GetSongLyricsAsync(lyricSearchRequest);
@@ -73,12 +73,13 @@ namespace CajunLyrics.Tests.Unit
             var lyricSearchResultString = BuildSearchResultXmlString(lyricSearchResult);
             var responseHeaders = new Dictionary<string, string>
             {
-                { "Content-Type", "text/xml; charset=Off" }
+                { "Content-Type", "text/xml;charset=Off" } // The API returns this content type, which is not valid
             };
+
             MockHttpMessageHandler.Expect(
                 HttpMethod.Get,
                 $"{MockHttpClient.BaseAddress}LyricSearchList.php?artist={artist}&title={title}")
-                .Respond(responseHeaders, "text/xml", lyricSearchResultString);
+                .Respond(responseHeaders, new StringContent(lyricSearchResultString));
 
             // Act
             LyricSearchResult results = await sut.GetSearchResultsAsync(lyricSearchRequest);

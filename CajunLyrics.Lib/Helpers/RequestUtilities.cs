@@ -14,17 +14,22 @@ namespace CajunLyrics.Lib.Helpers
 
         private static string BuildQueryString(LyricSearchRequest request)
         {
-            var queryParams = new List<string>
-            {
-                $"artist={request.Artist}",
-                $"title={request.Title}"
-            };
+            var queryParams = new List<string>();
 
-            if (request.Language != null)
+            if (!string.IsNullOrEmpty(request.Artist))
+            {
+                queryParams.Add($"artist={request.Artist}");
+            }
+
+            if (!string.IsNullOrEmpty(request.Title))
+            {
+                queryParams.Add($"title={request.Title}");
+            }
+
+            if (!string.IsNullOrEmpty(request.Language))
             {
                 queryParams.Add($"lf={request.Language}");
             }
-            ;
 
             return string.Join('&', queryParams);
         }
