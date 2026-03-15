@@ -2,7 +2,7 @@
 
 namespace CajunLyrics.Lib.Helpers
 {
-    internal static class RequestUtilities
+    static class RequestUtilities
     {
         public static string BuildRequestUri(string resource, LyricSearchRequest request)
         {
@@ -16,20 +16,10 @@ namespace CajunLyrics.Lib.Helpers
         {
             var queryParams = new List<string>();
 
-            if (!string.IsNullOrEmpty(request.Artist))
-            {
-                queryParams.Add($"artist={request.Artist}");
-            }
-
-            if (!string.IsNullOrEmpty(request.Title))
-            {
-                queryParams.Add($"title={request.Title}");
-            }
-
-            if (!string.IsNullOrEmpty(request.Language))
-            {
-                queryParams.Add($"lf={request.Language}");
-            }
+            // Only include parameters that are not null or empty
+            queryParams.AddIfNotNullOrEmpty(request.Artist, "artist");
+            queryParams.AddIfNotNullOrEmpty(request.Title, "title");
+            queryParams.AddIfNotNullOrEmpty(request.Language, "lf");
 
             return string.Join('&', queryParams);
         }
