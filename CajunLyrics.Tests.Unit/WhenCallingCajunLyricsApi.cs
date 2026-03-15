@@ -3,9 +3,6 @@ using CajunLyrics.Lib;
 using CajunLyrics.Lib.Models;
 using FluentAssertions;
 using RichardSzalay.MockHttp;
-using System.Net;
-using System.Text;
-using System.Web;
 
 namespace CajunLyrics.Tests.Unit
 {
@@ -109,15 +106,49 @@ namespace CajunLyrics.Tests.Unit
                 .Create();
             var lyricSearchResultString = BuildSearchResultXmlString(lyricSearchResult);
 
+            var responseHeaders = new Dictionary<string, string>
+            {
+                { "Content-Type", "text/xml;charset=Off" } // The API returns this content type, which is not valid
+            };
             MockHttpMessageHandler.Expect(
                 HttpMethod.Get, $"{MockHttpClient.BaseAddress}LyricSearchList.php?artist={artist}&title={title}&lf={language}")
-                .Respond(HttpStatusCode.OK, "text/xml", lyricSearchResultString);
+                .Respond(responseHeaders, new StringContent(lyricSearchResultString));
 
             // Act
             var results = await sut.GetSearchResultsAsync(lyricSearchRequest);
 
             // Assert
             results.Should().BeEquivalentTo(lyricSearchResult);
+        }
+
+        [Test]
+        public async Task ShouldHandleNoSearchResults()
+        {
+            // Arrange
+            var artist = fixture.Create<string>();
+            var title = fixture.Create<string>();
+            var lyricSearchRequest = new LyricSearchRequest
+            {
+                Artist = artist,
+                Title = title
+            };
+            var lyricSearchResult = fixture.Build<LyricSearchResult>()
+                .With(s => s.LyricResults, new List<LyricResult>())
+                .Create();
+            var lyricSearchResultString = BuildSearchResultXmlString(lyricSearchResult);
+            var responseHeaders = new Dictionary<string, string>
+            {
+                { "Content-Type", "text/xml;charset=Off" } // The API returns this content type, which is not valid
+            };
+            MockHttpMessageHandler.Expect(
+                HttpMethod.Get, $"{MockHttpClient.BaseAddress}LyricSearchList.php?artist={artist}&title={title}")
+                .Respond(responseHeaders, new StringContent(lyricSearchResultString));
+            
+            // Act
+            var results = await sut.GetSearchResultsAsync(lyricSearchRequest);
+            
+            // Assert
+            results.LyricResults.Should().BeEmpty();
         }
     }
 }
