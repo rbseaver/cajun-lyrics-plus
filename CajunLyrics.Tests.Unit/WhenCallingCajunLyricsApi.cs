@@ -1,11 +1,14 @@
 ﻿using AutoFixture;
 using CajunLyrics.Lib;
 using CajunLyrics.Lib.Models;
+using CajunLyrics.Tests.Unit.Common;
 using FluentAssertions;
 using RichardSzalay.MockHttp;
 
 namespace CajunLyrics.Tests.Unit
 {
+    [TestFixture]
+    [Category("Lib")]
     public class WhenCallingCajunLyricsApi : TestBase
     {
         private Fixture fixture;
