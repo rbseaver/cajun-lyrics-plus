@@ -8,7 +8,7 @@ using RichardSzalay.MockHttp;
 using System.Text;
 using System.Web;
 
-namespace CajunLyrics.Tests.Unit
+namespace CajunLyrics.Tests.Unit.Common
 {
     public class TestBase
     {
@@ -17,7 +17,7 @@ namespace CajunLyrics.Tests.Unit
         readonly private HttpClient mockHttpClient;
         readonly private MockHttpMessageHandler mockHttpMessageHandler;
         private readonly Uri uri;
-        protected readonly CajunLyricsService sut;
+        protected readonly ILyricsService sut;
         private readonly ServiceCollection services;
 
         public TestBase()
@@ -36,7 +36,7 @@ namespace CajunLyrics.Tests.Unit
 
             services = new ServiceCollection();
             services.AddSingleton(MockHttpClientFactory);
-            services.AddTransient<CajunLyricsService>();
+            services.AddTransient<ILyricsService, CajunLyricsService>();
             var provider = services.BuildServiceProvider();
 
             sut = provider.GetRequiredService<CajunLyricsService>();

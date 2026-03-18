@@ -6,6 +6,7 @@ using System.Xml.Serialization;
 namespace CajunLyrics.Lib.Services
 {
     public class CajunLyricsService(IHttpClientFactory httpClientFactory)
+: ILyricsService
     {
         private static readonly Dictionary<Type, XmlSerializer> Serializers = new()
         {

@@ -6,6 +6,8 @@ using System.Runtime.CompilerServices;
 
 namespace CajunLyrics.Tests.Integration
 {
+    [TestFixture]
+    [Category("Lib")]
     public class WhenCallingCajunLyricsService
     {
         private CajunLyricsService cajunLyricsService;
