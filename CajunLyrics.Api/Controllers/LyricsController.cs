@@ -21,16 +21,15 @@ namespace CajunLyrics.Api.Controllers
             try
             {
                 var result = await cajunLyricsService.GetSongLyricsAsync(request);
-                if (result?.Lyric == null)
+                if (string.IsNullOrEmpty(result.Lyric))
                 {
-                    return NotFound("Lyrics not found for the specified artist and title.");
+                    return NotFound($"Lyrics not found for '{artist}' and '{title}");
                 }
                 return Ok(result);
             }
-            catch (Exception ex)
+            catch
             {
-                // Log the exception (not implemented here)
-                return StatusCode(500, $"An error occurred while fetching lyrics: {ex.Message}");
+                return StatusCode(500, "An error occurred while attempting to retrieve lyrics.");
             }
         }
     }
