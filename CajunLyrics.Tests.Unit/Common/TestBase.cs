@@ -39,7 +39,7 @@ namespace CajunLyrics.Tests.Unit.Common
             services.AddTransient<ILyricsService, CajunLyricsService>();
             var provider = services.BuildServiceProvider();
 
-            sut = provider.GetRequiredService<CajunLyricsService>();
+            sut = provider.GetRequiredService<ILyricsService>();
         }
 
         public string BaseUrl
