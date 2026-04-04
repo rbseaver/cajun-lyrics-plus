@@ -1,5 +1,6 @@
 ﻿using AutoFixture;
 using CajunLyrics.Lib;
+using CajunLyrics.Lib.Configuration;
 using CajunLyrics.Lib.Models;
 using CajunLyrics.Lib.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,11 +25,14 @@ namespace CajunLyrics.Tests.Unit.Common
         {
             baseFixture = new Fixture();
             uri = baseFixture.Create<Uri>();
-
+            var options = new HttpClientOptions
+            {
+                BaseAddress = uri
+            };
             mockHttpMessageHandler = new MockHttpMessageHandler();
             mockHttpClient = new HttpClient(mockHttpMessageHandler)
             {
-                BaseAddress = new Uri(BaseUrl)
+                BaseAddress = options.BaseAddress
             };
 
             httpClientFactoryMock = Substitute.For<IHttpClientFactory>();

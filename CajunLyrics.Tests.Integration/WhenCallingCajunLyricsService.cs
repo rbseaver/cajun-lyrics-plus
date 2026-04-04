@@ -1,6 +1,7 @@
 ﻿using CajunLyrics.Lib.Models;
 using CajunLyrics.Lib.Services;
 using FluentAssertions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Runtime.CompilerServices;
 
@@ -10,7 +11,7 @@ namespace CajunLyrics.Tests.Integration
     [Category("Lib")]
     public class WhenCallingCajunLyricsService
     {
-        private CajunLyricsService cajunLyricsService;
+        private ILyricsService? cajunLyricsService;
 
         [SetUp]
         public void Setup()
@@ -20,11 +21,11 @@ namespace CajunLyrics.Tests.Integration
                 nameof(CajunLyricsService),
                 client =>
                 {
-                    client.BaseAddress = new Uri("https://api.cajunlyrics.com");
+                    client.BaseAddress = new Uri();
                 });
-            services.AddScoped<CajunLyricsService>();
+            services.AddScoped<ILyricsService, CajunLyricsService>();
             var provider = services.BuildServiceProvider();
-            cajunLyricsService = provider.GetRequiredService<CajunLyricsService>();
+            cajunLyricsService = provider.GetRequiredService<ILyricsService>();
         }
 
         [Test]
