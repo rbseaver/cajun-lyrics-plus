@@ -1,22 +1,27 @@
-﻿using AutoFixture;
+using AutoFixture;
 using CajunLyrics.Lib;
+using CajunLyrics.Lib.Http;
 using CajunLyrics.Lib.Models;
+using CajunLyrics.Lib.Services;
 using CajunLyrics.Tests.Unit.Common;
 using FluentAssertions;
+using NSubstitute;
 using RichardSzalay.MockHttp;
 
 namespace CajunLyrics.Tests.Unit
 {
     [TestFixture]
     [Category("Lib")]
-    public class WhenCallingCajunLyricsApi : TestBase
+    public class WhenCallingCajunLyricsApi : LyricsClientTestBase
     {
         private Fixture fixture;
+        private ILyricsService testLyricsService;
 
         [SetUp]
         public void SetUp()
         {
             fixture = new Fixture();
+            testLyricsService = new CajunLyricsService(MockHttpClientFactory);
         }
 
         [Test]
@@ -32,8 +37,8 @@ namespace CajunLyrics.Tests.Unit
                 Title = title
             };
 
-            var lyricResult = BuildLyricResults(artist, title, true).First();
-            var lyricResultXmlString = BuildLyricResultXmlString(lyricResult);
+            var lyricResult = TestLyricUtility.BuildLyricResults(artist, title, true).First();
+            var lyricResultXmlString = TestLyricUtility.BuildLyricResultXmlString(lyricResult);
             
             var responseHeaders = new Dictionary<string, string>
             {
@@ -46,7 +51,7 @@ namespace CajunLyrics.Tests.Unit
                 .Respond(responseHeaders, new StringContent(lyricResultXmlString));
 
             // Act
-            LyricResult result = await sut.GetSongLyricsAsync(lyricSearchRequest);
+            LyricResult result = await testLyricsService.GetSongLyricsAsync(lyricSearchRequest);
 
             // Assert
             result.Should().BeEquivalentTo(lyricResult);
@@ -65,12 +70,12 @@ namespace CajunLyrics.Tests.Unit
                 Title = title
             };
 
-            IList<LyricResult> lyricResults = BuildLyricResults(artist, title, false, 5);
+            IList<LyricResult> lyricResults = TestLyricUtility.BuildLyricResults(artist, title, false, 5);
 
             var lyricSearchResult = fixture.Build<LyricSearchResult>()
                 .With(s => s.LyricResults, lyricResults)
                 .Create();
-            var lyricSearchResultString = BuildSearchResultXmlString(lyricSearchResult);
+            var lyricSearchResultString = TestLyricUtility.BuildSearchResultXmlString(lyricSearchResult);
             var responseHeaders = new Dictionary<string, string>
             {
                 { "Content-Type", "text/xml;charset=Off" } // The API returns this content type, which is not valid
@@ -82,7 +87,7 @@ namespace CajunLyrics.Tests.Unit
                 .Respond(responseHeaders, new StringContent(lyricSearchResultString));
 
             // Act
-            LyricSearchResult results = await sut.GetSearchResultsAsync(lyricSearchRequest);
+            LyricSearchResult results = await testLyricsService.GetSearchResultsAsync(lyricSearchRequest);
 
             // Assert
             results.Should().BeEquivalentTo(lyricSearchResult);
@@ -102,12 +107,12 @@ namespace CajunLyrics.Tests.Unit
                 .With(r => r.Language, language)
                 .Create();
 
-            IList<LyricResult> lyricResults = BuildLyricResults(artist, title, false, 5);
+            IList<LyricResult> lyricResults = TestLyricUtility.BuildLyricResults(artist, title, false, 5);
 
             var lyricSearchResult = fixture.Build<LyricSearchResult>()
                 .With(s => s.LyricResults, lyricResults)
                 .Create();
-            var lyricSearchResultString = BuildSearchResultXmlString(lyricSearchResult);
+            var lyricSearchResultString = TestLyricUtility.BuildSearchResultXmlString(lyricSearchResult);
 
             var responseHeaders = new Dictionary<string, string>
             {
@@ -118,7 +123,7 @@ namespace CajunLyrics.Tests.Unit
                 .Respond(responseHeaders, new StringContent(lyricSearchResultString));
 
             // Act
-            var results = await sut.GetSearchResultsAsync(lyricSearchRequest);
+            var results = await testLyricsService.GetSearchResultsAsync(lyricSearchRequest);
 
             // Assert
             results.Should().BeEquivalentTo(lyricSearchResult);
@@ -138,7 +143,7 @@ namespace CajunLyrics.Tests.Unit
             var lyricSearchResult = fixture.Build<LyricSearchResult>()
                 .With(s => s.LyricResults, [])
                 .Create();
-            var lyricSearchResultString = BuildSearchResultXmlString(lyricSearchResult);
+            var lyricSearchResultString = TestLyricUtility.BuildSearchResultXmlString(lyricSearchResult);
             var responseHeaders = new Dictionary<string, string>
             {
                 { "Content-Type", "text/xml;charset=Off" } // The API returns this content type, which is not valid
@@ -148,7 +153,7 @@ namespace CajunLyrics.Tests.Unit
                 .Respond(responseHeaders, new StringContent(lyricSearchResultString));
             
             // Act
-            var results = await sut.GetSearchResultsAsync(lyricSearchRequest);
+            var results = await testLyricsService.GetSearchResultsAsync(lyricSearchRequest);
             
             // Assert
             results.LyricResults.Should().BeEmpty();

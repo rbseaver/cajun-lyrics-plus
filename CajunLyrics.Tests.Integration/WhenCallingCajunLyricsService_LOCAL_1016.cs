@@ -1,4 +1,4 @@
-﻿using CajunLyrics.Lib.Models;
+using CajunLyrics.Lib.Models;
 using CajunLyrics.Lib.Services;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
@@ -27,7 +27,8 @@ namespace CajunLyrics.Tests.Integration
                 nameof(CajunLyricsService),
                 (sp, client) =>
                 {
-                    client.BaseAddress = new Uri("http://api.cajunlyrics.com/");
+                    var options = sp.GetRequiredService<IOptions<HttpClientOptions>>().Value;
+                    client.BaseAddress = options.BaseAddress;
                 });
             services.AddScoped<ILyricsService, CajunLyricsService>();
             var provider = services.BuildServiceProvider();

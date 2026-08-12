@@ -2,10 +2,8 @@
 using CajunLyrics.Lib.Services;
 using FluentAssertions;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
 using System.Runtime.CompilerServices;
-using CajunLyrics.Lib.Configuration;
 
 namespace CajunLyrics.Tests.Integration
 {
@@ -18,16 +16,12 @@ namespace CajunLyrics.Tests.Integration
         [SetUp]
         public void Setup()
         {
-            var configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .Build();
             var services = new ServiceCollection();
-            services.Configure<HttpClientOptions>(configuration.GetSection("HttpClient"));
             services.AddHttpClient(
                 nameof(CajunLyricsService),
-                (sp, client) =>
+                client =>
                 {
-                    client.BaseAddress = new Uri("http://api.cajunlyrics.com/");
+                    client.BaseAddress = new Uri();
                 });
             services.AddScoped<ILyricsService, CajunLyricsService>();
             var provider = services.BuildServiceProvider();
