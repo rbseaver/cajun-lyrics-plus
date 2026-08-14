@@ -1,6 +1,7 @@
 using CajunLyrics.Lib.Configuration;
 using CajunLyrics.Lib.Http;
 using CajunLyrics.Lib.Services;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "CajunLyrics API v1");
+    });
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();
