@@ -11,6 +11,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// Allow the React dev server to call the API directly during development
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ReactDevServer", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 // Register HttpClientOptions as configuration management for ILyricsService
 builder.Services.Configure<HttpClientOptions>(builder.Configuration.GetSection("HttpClient"));
 
@@ -45,6 +56,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors("ReactDevServer");
+}
 
 app.UseAuthorization();
 
