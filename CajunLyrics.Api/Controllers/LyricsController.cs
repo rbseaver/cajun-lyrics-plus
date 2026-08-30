@@ -21,9 +21,9 @@ namespace CajunLyrics.Api.Controllers
             try
             {
                 var result = await cajunLyricsService.GetSongLyricsAsync(request);
-                if (string.IsNullOrEmpty(result.Lyric))
+                if (string.IsNullOrWhiteSpace(result.Lyric) || string.Equals(result.Lyric.Trim(), "Not found", StringComparison.OrdinalIgnoreCase))
                 {
-                    return NotFound($"Lyrics not found for '{artist}' and '{title}");
+                    return NotFound($"Lyrics not found for '{artist}' and '{title}'");
                 }
                 return Ok(result);
             }

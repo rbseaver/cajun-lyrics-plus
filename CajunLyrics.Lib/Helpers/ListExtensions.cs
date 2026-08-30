@@ -1,4 +1,4 @@
-﻿namespace CajunLyrics.Lib.Helpers
+namespace CajunLyrics.Lib.Helpers
 {
     public static class ListExtensions
     {
@@ -6,7 +6,7 @@
         {
             if (!string.IsNullOrEmpty(value))
             {
-                list.Add($"{parameterName}={value}");
+                list.Add($"{parameterName}={Uri.EscapeDataString(value)}");
             }
         }
     }

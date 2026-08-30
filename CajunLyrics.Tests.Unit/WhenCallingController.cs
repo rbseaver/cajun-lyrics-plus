@@ -60,7 +60,7 @@ public class WhenCallingController
 
         var result = (NotFoundObjectResult)await controller.Get(artist, title, language);
 
-        result.Value.Should().Be($"Lyrics not found for '{artist}' and '{title}");
+        result.Value.Should().Be($"Lyrics not found for '{artist}' and '{title}'");
     }
 
     [Test]

@@ -1,6 +1,7 @@
 using CajunLyrics.Lib.Configuration;
 using CajunLyrics.Lib.Http;
 using CajunLyrics.Lib.Services;
+using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +13,21 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 // Register HttpClientOptions as configuration management for ILyricsService
 builder.Services.Configure<HttpClientOptions>(builder.Configuration.GetSection("HttpClient"));
-builder.Services.AddHttpClient();
+
+builder.Services.AddHttpClient(nameof(CajunLyricsService), (sp, client) =>
+{
+    var options = sp.GetRequiredService<IOptions<HttpClientOptions>>().Value;
+    client.BaseAddress = options.BaseAddress;
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("CajunLyrics.Api/1.0");
+});
+
+builder.Services.AddHttpClient(nameof(CajunLyricsClient), (sp, client) =>
+{
+    var options = sp.GetRequiredService<IOptions<HttpClientOptions>>().Value;
+    client.BaseAddress = options.BaseAddress;
+    client.DefaultRequestHeaders.UserAgent.ParseAdd("CajunLyrics.Api/1.0");
+});
+
 builder.Services.AddScoped<ILyricsService, CajunLyricsService>();
 builder.Services.AddScoped<ILyricsClient, CajunLyricsClient>();
 
@@ -35,3 +50,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }

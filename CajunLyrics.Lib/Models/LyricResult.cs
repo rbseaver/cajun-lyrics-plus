@@ -1,12 +1,19 @@
-﻿using System.Xml.Serialization;
+using System.Xml.Serialization;
 
 namespace CajunLyrics.Lib.Models
 {
     [XmlRoot("GetLyricResult", Namespace = "http://api.cajunlyrics.com/")]
     public class LyricResult
     {
-        [XmlElement("Id")]
+        [XmlIgnore]
         public int Id { get; set; }
+
+        [XmlElement("Id")]
+        public string? IdString
+        {
+            get => Id.ToString();
+            set => Id = int.TryParse(value, out var id) ? id : 0;
+        }
 
         [XmlElement("LyricsUrl")]
         public string? LyricsUrl { get; set; }
