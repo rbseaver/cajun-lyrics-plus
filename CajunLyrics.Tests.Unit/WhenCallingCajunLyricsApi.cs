@@ -99,7 +99,7 @@ namespace CajunLyrics.Tests.Unit
             // Arrange
             var artist = fixture.Create<string>();
             var title = fixture.Create<string>();
-            var language = fixture.Create<string>();
+            var language = LyricLanguage.LouisianaFrench;
 
             var lyricSearchRequest = fixture.Build<LyricSearchRequest>()
                 .With(r => r.Artist, artist)
@@ -119,7 +119,7 @@ namespace CajunLyrics.Tests.Unit
                 { "Content-Type", "text/xml;charset=Off" } // The API returns this content type, which is not valid
             };
             MockHttpMessageHandler.Expect(
-                HttpMethod.Get, $"{MockHttpClient.BaseAddress}LyricSearchList.php?artist={artist}&title={title}&lf={language}")
+                HttpMethod.Get, $"{MockHttpClient.BaseAddress}LyricSearchList.php?artist={artist}&title={title}&lf={language.Code}")
                 .Respond(responseHeaders, new StringContent(lyricSearchResultString));
 
             // Act

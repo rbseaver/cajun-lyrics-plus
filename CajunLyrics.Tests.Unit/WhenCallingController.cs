@@ -1,4 +1,4 @@
-﻿using AutoFixture;
+using AutoFixture;
 using CajunLyrics.Api.Controllers;
 using CajunLyrics.Lib.Models;
 using CajunLyrics.Lib.Services;
@@ -30,7 +30,7 @@ public class WhenCallingController
     {
         var artist = fixture.Create<string>();
         var title = fixture.Create<string>();
-        var language = fixture.Create<string>();
+        var language = LyricLanguage.LouisianaFrench;
 
         var expectedLyricResult = fixture.Create<LyricResult>();
         cajunLyricsServiceMock.GetSongLyricsAsync(
@@ -48,7 +48,7 @@ public class WhenCallingController
     {
         var artist = fixture.Create<string>();
         var title = fixture.Create<string>();
-        var language = fixture.Create<string>();
+        var language = LyricLanguage.French;
 
         var expectedLyricResult = fixture.Build<LyricResult>()
             .With(l => l.Lyric, string.Empty)
@@ -68,7 +68,7 @@ public class WhenCallingController
     {
         var artist = fixture.Create<string>();
         var title = fixture.Create<string>();
-        var language = fixture.Create<string>();
+        var language = LyricLanguage.QuebecoisFrench;
 
         cajunLyricsServiceMock.GetSongLyricsAsync(Arg.Any<LyricSearchRequest>())
             .Throws<InvalidOperationException>();

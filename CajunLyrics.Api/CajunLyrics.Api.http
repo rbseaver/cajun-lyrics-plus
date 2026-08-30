@@ -4,6 +4,10 @@
 GET {{CajunLyrics.Api_HostAddress}}/api/Lyrics/lyric?artist=Zachary%20Richard&title=Travailler%20C%27est%20Trop%20Dur
 Accept: application/json
 
+### Get Cajun Lyrics with language filter
+GET {{CajunLyrics.Api_HostAddress}}/api/Lyrics/lyric?artist=Zachary%20Richard&title=Travailler%20C%27est%20Trop%20Dur&language=fr_LA
+Accept: application/json
+
 ### Get OpenAPI specification
 GET {{CajunLyrics.Api_HostAddress}}/openapi/v1.json
 Accept: application/json

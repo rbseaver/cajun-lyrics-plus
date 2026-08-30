@@ -1,4 +1,4 @@
-﻿using CajunLyrics.Lib.Models;
+using CajunLyrics.Lib.Models;
 
 namespace CajunLyrics.Lib.Helpers
 {
@@ -19,7 +19,7 @@ namespace CajunLyrics.Lib.Helpers
             // Only include parameters that are not null or empty
             queryParams.AddIfNotNullOrEmpty(request.Artist, "artist");
             queryParams.AddIfNotNullOrEmpty(request.Title, "title");
-            queryParams.AddIfNotNullOrEmpty(request.Language, "lf");
+            queryParams.AddIfNotNullOrEmpty(request.Language?.Code, "lf");
 
             return string.Join('&', queryParams);
         }

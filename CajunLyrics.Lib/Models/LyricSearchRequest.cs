@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace CajunLyrics.Lib.Models
 {
@@ -6,6 +6,6 @@ namespace CajunLyrics.Lib.Models
     {
         public string? Artist { get; set; }
         public string? Title { get; set; }
-        public string? Language { get; set; }
+        public LyricLanguage? Language { get; set; }
     }
 }

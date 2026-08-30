@@ -1,4 +1,4 @@
-﻿using CajunLyrics.Lib.Models;
+using CajunLyrics.Lib.Models;
 using CajunLyrics.Lib.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,7 +10,7 @@ namespace CajunLyrics.Api.Controllers
     {
         [HttpGet]
         [Route("lyric")]
-        public async Task<IActionResult> Get([FromQuery] string artist, [FromQuery] string title, [FromQuery] string language)
+        public async Task<IActionResult> Get([FromQuery] string artist, [FromQuery] string title, [FromQuery] LyricLanguage? language)
         {
             var request = new LyricSearchRequest
             {
