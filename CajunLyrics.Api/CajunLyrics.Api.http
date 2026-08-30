@@ -1,6 +1,11 @@
-@CajunLyrics.Api_HostAddress = http://localhost:5118
+@CajunLyrics.Api_HostAddress = https://localhost:7156
 
-GET {{CajunLyrics.Api_HostAddress}}/weatherforecast/
+### Get Cajun Lyrics by artist and title
+GET {{CajunLyrics.Api_HostAddress}}/api/Lyrics/lyric?artist=Zachary%20Richard&title=Travailler%20C%27est%20Trop%20Dur
+Accept: application/json
+
+### Get OpenAPI specification
+GET {{CajunLyrics.Api_HostAddress}}/openapi/v1.json
 Accept: application/json
 
 ###
