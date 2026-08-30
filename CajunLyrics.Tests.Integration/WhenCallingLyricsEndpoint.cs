@@ -88,4 +88,18 @@ public class WhenCallingLyricsEndpoint
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
     }
+
+    [Test]
+    public async Task ShouldRedirectRootToScalarDocumentation()
+    {
+        var noRedirectClient = factory.CreateClient(new WebApplicationFactoryClientOptions
+        {
+            AllowAutoRedirect = false
+        });
+
+        var response = await noRedirectClient.GetAsync("/");
+
+        response.StatusCode.Should().Be(HttpStatusCode.Redirect);
+        response.Headers.Location.Should().Be(new Uri("/scalar/v1", UriKind.Relative));
+    }
 }
