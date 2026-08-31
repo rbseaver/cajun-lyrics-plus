@@ -84,4 +84,20 @@ describe('useLyricSearch', () => {
 
     expect(result.current.errorMessage).toBe('Unexpected error from server (503).');
   });
+
+  it('updates to error when the request throws a network-level exception', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('Network unavailable')));
+
+    const { result } = renderHook(() => useLyricSearch());
+
+    await act(async () => {
+      await result.current.search({ artist: 'Zachary Richard' });
+    });
+
+    await waitFor(() => {
+      expect(result.current.status).toBe('error');
+    });
+
+    expect(result.current.errorMessage).toBe('Network unavailable');
+  });
 });
