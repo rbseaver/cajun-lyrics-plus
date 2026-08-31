@@ -43,6 +43,12 @@ builder.Services.AddScoped<ILyricsService, CajunLyricsService>();
 builder.Services.AddScoped<ILyricsClient, CajunLyricsClient>();
 
 var app = builder.Build();
+
+if (!app.Environment.IsEnvironment("Docker"))
+{
+    app.UseHttpsRedirection();
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -53,18 +59,14 @@ if (app.Environment.IsDevelopment())
     });
     app.MapScalarApiReference();
     app.MapGet("/", () => Results.Redirect("/scalar/v1"));
-}
-
-app.UseHttpsRedirection();
-
-if (app.Environment.IsDevelopment())
-{
     app.UseCors("ReactDevServer");
 }
 
+app.UseStaticFiles();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapFallbackToFile("index.html");
 
 app.Run();
 
