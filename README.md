@@ -24,7 +24,7 @@ This will:
 
 The GitLab pipeline runs on both pushes to `main` and on version tags.
 
-- it runs frontend Vitest unit tests in `CajunLyrics.Web`
+- it runs frontend Vitest unit tests in `CajunLyrics.Web` using Node 22+
 - it restores the .NET solution and runs the existing NUnit unit test suite
 - it blocks release tags if either test suite fails
 
