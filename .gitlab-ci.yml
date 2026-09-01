@@ -1,12 +1,50 @@
-# The Docker image that will be used to build your app
-image: node:lts
-create-pages:
-  pages:
-    # The folder that contains the files to be exposed at the Page URL
-    publish: public
+stages:
+  - test
+  - release-check
+
+workflow:
   rules:
-    # This ensures that only pushes to the default branch will trigger
-    # a pages deploy
-    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_COMMIT_TAG'
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .nuget/packages/
+    - CajunLyrics.Web/node_modules/
+
+frontend_tests:
+  stage: test
+  image: node:20
   script:
-    - npm run prod
+    - cd CajunLyrics.Web
+    - npm ci
+    - npm test -- --run
+  artifacts:
+    when: always
+    paths:
+      - CajunLyrics.Web/coverage/
+    expire_in: 7 days
+
+unit_tests:
+  stage: test
+  image: mcr.microsoft.com/dotnet/sdk:10.0
+  script:
+    - dotnet restore CajunLyrics.slnx
+    - dotnet test CajunLyrics.Tests.Unit/CajunLyrics.Tests.Unit.csproj --logger "trx;LogFileName=unit-tests.trx" --results-directory test-results
+  artifacts:
+    when: always
+    paths:
+      - test-results/
+    expire_in: 7 days
+
+release_gate:
+  stage: release-check
+  image: mcr.microsoft.com/dotnet/sdk:10.0
+  needs:
+    - frontend_tests
+    - unit_tests
+  rules:
+    - if: '$CI_COMMIT_TAG'
+  script:
+    - echo "Release tag ${CI_COMMIT_TAG} passed the frontend and backend unit test gates."

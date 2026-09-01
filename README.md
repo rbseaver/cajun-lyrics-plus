@@ -1,10 +1,12 @@
 # Cajun Lyrics Plus
 
-## Local release process
+## Release and CI process
 
-This repository uses `standard-version` to generate a changelog and create a semantic-version tag locally.
+This repository uses a simple local release flow plus GitLab CI for automated validation.
 
-### Commands
+### Local release flow
+
+This project uses `standard-version` to generate a changelog and create a semantic-version tag locally.
 
 ```bash
 npm install
@@ -17,6 +19,16 @@ This will:
 - update `CHANGELOG.md`
 - bump the version and write it back to `package.json`
 - create a git tag like `v1.0.0`
+
+### GitLab CI
+
+The GitLab pipeline runs on both pushes to `main` and on version tags.
+
+- it runs frontend Vitest unit tests in `CajunLyrics.Web`
+- it restores the .NET solution and runs the existing NUnit unit test suite
+- it blocks release tags if either test suite fails
+
+The integration test suite is intentionally not part of the CI gate right now because it is more network-dependent and can be flaky.
 
 ### Commit conventions
 
