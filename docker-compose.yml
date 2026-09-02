@@ -1,10 +1,11 @@
 services:
-  cajunlyrics:
+  cajunlyrics-plus:
     build:
       context: .
       dockerfile: CajunLyrics.Api/Dockerfile
-    image: cajunlyrics:latest
-    container_name: cajunlyrics
+    image: cajunlyrics-plus:local
+    container_name: cajunlyrics-plus
+    restart: unless-stopped
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_URLS: http://+:8080

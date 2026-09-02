@@ -3,6 +3,20 @@
 [![pipeline status](https://gitlab.com/rbseaver/cajun-lyrics-plus/badges/main/pipeline.svg)](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/pipelines)
 [![coverage](https://gitlab.com/rbseaver/cajun-lyrics-plus/badges/main/coverage.svg)](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/jobs)
 
+## Local Docker monolith
+
+This repo is set up as a single Dockerized app: the backend serves the built frontend as static files, so you can run the whole project locally from one container.
+
+```bash
+docker compose up --build
+```
+
+Then open:
+
+- http://localhost:8080
+
+This runs the ASP.NET API and the React frontend together in one deployment unit, which keeps the local dev experience simple while still using the same backend/frontend structure as the app itself.
+
 ## Release and CI process
 
 This repository uses a simple local release flow plus GitLab CI for automated validation.
