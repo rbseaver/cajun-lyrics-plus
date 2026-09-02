@@ -5,7 +5,22 @@ import App from '../App';
 describe('App integration', () => {
   it('runs the full lyric search flow with a mocked fetch response', async () => {
     const user = userEvent.setup();
-    const mockResponse = {
+
+    const searchResultsResponse = {
+      ok: true,
+      status: 200,
+      json: async () => ({
+        lyricResults: [
+          {
+            id: 12,
+            artist: 'Zachary Richard',
+            title: "Travailler C'est Trop Dur",
+          },
+        ],
+      }),
+    };
+
+    const lyricResponse = {
       ok: true,
       status: 200,
       json: async () => ({
@@ -16,7 +31,7 @@ describe('App integration', () => {
       }),
     };
 
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(mockResponse));
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValueOnce(searchResultsResponse).mockResolvedValueOnce(lyricResponse));
 
     render(<App />);
 
@@ -28,7 +43,13 @@ describe('App integration', () => {
       expect(screen.getByLabelText(/lyrics for travailler c'est trop dur/i)).toBeInTheDocument();
     });
 
-    expect(fetch).toHaveBeenCalledWith(
+    expect(fetch).toHaveBeenNthCalledWith(
+      1,
+      "/api/Lyrics/search?artist=Zachary+Richard&title=Travailler+C%27est+Trop+Dur",
+      { headers: { Accept: 'application/json' } },
+    );
+    expect(fetch).toHaveBeenNthCalledWith(
+      2,
       "/api/Lyrics/lyric?artist=Zachary+Richard&title=Travailler+C%27est+Trop+Dur",
       { headers: { Accept: 'application/json' } },
     );

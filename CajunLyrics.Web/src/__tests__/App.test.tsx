@@ -11,8 +11,11 @@ describe('App', () => {
     vi.mocked(useLyricSearch).mockReturnValue({
       status: 'idle',
       result: null,
+      results: [],
       errorMessage: null,
       search: vi.fn(),
+      searchResults: vi.fn(),
+      selectResult: vi.fn(),
       reset: vi.fn(),
     });
 
@@ -31,8 +34,11 @@ describe('App', () => {
         title: 'Travailler C\'est Trop Dur',
         lyric: 'Là on travaille\nEt ça va mieux',
       },
+      results: [],
       errorMessage: null,
       search: vi.fn(),
+      searchResults: vi.fn(),
+      selectResult: vi.fn(),
       reset: vi.fn(),
     });
 
@@ -42,12 +48,37 @@ describe('App', () => {
     expect(screen.getByText(/là on travaille/i)).toBeInTheDocument();
   });
 
+  it('renders a list of matching results when the search returns more than one match', () => {
+    vi.mocked(useLyricSearch).mockReturnValue({
+      status: 'results',
+      result: null,
+      results: [
+        { id: 11, artist: 'Zachary Richard', title: 'Travailler C\'est Trop Dur' },
+        { id: 12, artist: 'Zachary Richard', title: 'Un Peu De Temps' },
+      ],
+      errorMessage: null,
+      search: vi.fn(),
+      searchResults: vi.fn(),
+      selectResult: vi.fn(),
+      reset: vi.fn(),
+    });
+
+    render(<App />);
+
+    expect(screen.getByLabelText(/search results/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /travailler c'est trop dur/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /un peu de temps/i })).toBeInTheDocument();
+  });
+
   it('renders a not found message when the search misses', () => {
     vi.mocked(useLyricSearch).mockReturnValue({
       status: 'not_found',
       result: null,
+      results: [],
       errorMessage: 'No lyrics found for that artist and title.',
       search: vi.fn(),
+      searchResults: vi.fn(),
+      selectResult: vi.fn(),
       reset: vi.fn(),
     });
 

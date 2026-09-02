@@ -6,7 +6,7 @@ import { ErrorMessage } from './components/ErrorMessage';
 import { useLyricSearch } from './hooks/useLyricSearch';
 
 function App() {
-  const { status, result, errorMessage, search } = useLyricSearch();
+  const { status, result, results, errorMessage, searchResults, selectResult } = useLyricSearch();
 
   return (
     <div className="app">
@@ -37,11 +37,31 @@ function App() {
       </header>
 
       <main className="app-main" id="main-content">
-        <SearchForm onSearch={search} isLoading={status === 'loading'} />
+        <SearchForm onSearch={searchResults} isLoading={status === 'loading'} />
 
         {status === 'idle' && <EmptyState />}
 
         {status === 'success' && result && <LyricCard result={result} />}
+
+        {status === 'results' && results.length > 0 && (
+          <section className="search-results" aria-label="Search results">
+            <h2 className="search-results__title">Matching lyrics</h2>
+            <ul className="search-results__list">
+              {results.map((item) => (
+                <li key={item.id ?? `${item.artist}-${item.title}`}>
+                  <button
+                    type="button"
+                    className="search-results__button"
+                    onClick={() => void selectResult(item)}
+                  >
+                    <span className="search-results__artist">{item.artist}</span>
+                    <span className="search-results__title">{item.title}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {status === 'not_found' && (
           <ErrorMessage

@@ -24,3 +24,7 @@ export interface LyricResult {
   title?: string;
   lyric?: string;
 }
+
+export interface LyricSearchResults {
+  lyricResults: LyricResult[];
+}
