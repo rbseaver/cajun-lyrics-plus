@@ -19,7 +19,7 @@ frontend_tests:
   script:
     - cd CajunLyrics.Web
     - npm ci
-    - npm test -- --run
+    - npm test -- --run --coverage
   artifacts:
     when: always
     paths:
@@ -31,7 +31,7 @@ unit_tests:
   image: mcr.microsoft.com/dotnet/sdk:10.0
   script:
     - dotnet restore CajunLyrics.slnx
-    - dotnet test CajunLyrics.Tests.Unit/CajunLyrics.Tests.Unit.csproj --logger "trx;LogFileName=unit-tests.trx" --results-directory test-results
+    - dotnet test CajunLyrics.Tests.Unit/CajunLyrics.Tests.Unit.csproj --collect:"XPlat Code Coverage" --logger "trx;LogFileName=unit-tests.trx" --results-directory test-results
   artifacts:
     when: always
     paths:

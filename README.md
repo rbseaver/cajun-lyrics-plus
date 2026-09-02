@@ -25,7 +25,9 @@ This will:
 The GitLab pipeline runs on both pushes to `main` and on version tags.
 
 - it runs frontend Vitest unit tests in `CajunLyrics.Web` using Node 22+
+- it collects frontend coverage with V8
 - it restores the .NET solution and runs the existing NUnit unit test suite
+- it collects backend coverage with `XPlat Code Coverage`
 - it blocks release tags if either test suite fails
 
 The integration test suite is intentionally not part of the CI gate right now because it is more network-dependent and can be flaky.
