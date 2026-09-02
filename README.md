@@ -1,7 +1,7 @@
 # Cajun Lyrics Plus
 
-[![pipeline status](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/badges/main/pipeline.svg)](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/pipelines)
-[![coverage](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/badges/main/coverage.svg)](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/jobs)
+[![pipeline status](https://gitlab.com/rbseaver/cajun-lyrics-plus/badges/main/pipeline.svg)](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/pipelines)
+[![coverage](https://gitlab.com/rbseaver/cajun-lyrics-plus/badges/main/coverage.svg)](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/jobs)
 
 ## Release and CI process
 
