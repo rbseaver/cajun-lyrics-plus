@@ -1,6 +1,13 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [1.0.0](https://gitlab.com/rbseaver/cajun-lyrics-plus/compare/v0.0.0...v1.0.0) (2026-09-02)
+
+
+### Features
+
+* add search endpoint and multi-result selection workflow to API and UI ([aeab1f9](https://gitlab.com/rbseaver/cajun-lyrics-plus/commit/aeab1f96dd964365ee1e79ea9df5a8e47e033df5))
 
 ## 0.0.0 (2026-09-01)
 
