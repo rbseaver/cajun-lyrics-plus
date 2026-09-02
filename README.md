@@ -1,5 +1,8 @@
 # Cajun Lyrics Plus
 
+[![pipeline status](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/badges/main/pipeline.svg)](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/pipelines)
+[![coverage](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/badges/main/coverage.svg)](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/jobs)
+
 ## Release and CI process
 
 This repository uses a simple local release flow plus GitLab CI for automated validation.
