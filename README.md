@@ -23,11 +23,11 @@ This repository uses a simple local release flow plus GitLab CI for automated va
 
 ### Local release flow
 
-This project uses `standard-version` to generate a changelog and create a semantic-version tag locally.
+This project uses `release-it` with its Conventional Commits plugin to generate a changelog, bump the version, and create a semantic-version tag locally.
 
 ```bash
 npm install
-npm run release -- --first-release
+npm run release
 ```
 
 This will:
@@ -36,6 +36,14 @@ This will:
 - update `CHANGELOG.md`
 - bump the version and write it back to `package.json`
 - create a git tag like `v1.0.0`
+
+The release command creates the release commit and tag locally but does not push them. Review the result, then push when ready:
+
+```bash
+git push origin main --follow-tags
+```
+
+Use `npm run release -- --dry-run` to preview a release without changing files. Releases require a clean working tree.
 
 ### GitLab CI
 
