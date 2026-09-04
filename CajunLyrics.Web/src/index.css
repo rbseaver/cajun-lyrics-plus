@@ -293,6 +293,57 @@ body::before {
 }
 
 /* ============================================================
+   Search Results
+   ============================================================ */
+.search-results {
+  animation: fade-up 0.4s ease both;
+}
+
+.search-results > .search-results__title {
+  margin-bottom: 1rem;
+  color: var(--color-text-primary);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.search-results__list {
+  display: grid;
+  gap: 0.6rem;
+  list-style: none;
+}
+
+.search-results__button {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  color: var(--color-text-primary);
+  text-align: left;
+  background: var(--color-bg-glass);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.search-results__button:hover {
+  background: var(--color-bg-elevated);
+  border-color: var(--color-border-focus);
+}
+
+.search-results__artist {
+  flex-shrink: 0;
+  color: var(--color-accent-bright);
+  font-weight: 600;
+}
+
+.search-results__button .search-results__title {
+  color: var(--color-text-secondary);
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+
+/* ============================================================
    Lyric Card
    ============================================================ */
 .lyric-card {
