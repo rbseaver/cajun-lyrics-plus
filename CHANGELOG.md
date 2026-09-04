@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://gitlab.com/rbseaver/cajun-lyrics-plus/compare/v1.0.0...v1.1.0) (2026-09-04)
+
+
+### Features
+
+* **languages:** add support for Acadian French search ([46d5a5a](https://gitlab.com/rbseaver/cajun-lyrics-plus/commit/46d5a5a011a406110f8b1aa0bb192286734336b4))
+
+
+### Bug Fixes
+
+* correct image in Dockerfile ([b29ad22](https://gitlab.com/rbseaver/cajun-lyrics-plus/commit/b29ad221e8c640e2145f3cc1a7b776c917717b6e))
+* fix artist-lyric spacing in search results ([bc2bb28](https://gitlab.com/rbseaver/cajun-lyrics-plus/commit/bc2bb28b8b2c5028b543e19ac2aba47c56e225a1))
+
 ## [1.0.0](https://gitlab.com/rbseaver/cajun-lyrics-plus/compare/v0.0.0...v1.0.0) (2026-09-02)
 
 
