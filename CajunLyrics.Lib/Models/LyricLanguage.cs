@@ -11,9 +11,10 @@ public sealed record LyricLanguage : IParsable<LyricLanguage>
     public static readonly LyricLanguage French = new("fr", "French");
     public static readonly LyricLanguage LouisianaFrench = new("fr_LA", "Louisiana French");
     public static readonly LyricLanguage QuebecoisFrench = new("fr_QC", "Québécois French");
+    public static readonly LyricLanguage AcadianFrench = new("fr_AC", "Acadian French");
     public static readonly LyricLanguage English = new("en", "English");
 
-    public static readonly IReadOnlyList<LyricLanguage> All = [French, LouisianaFrench, QuebecoisFrench, English];
+    public static readonly IReadOnlyList<LyricLanguage> All = [French, LouisianaFrench, QuebecoisFrench, AcadianFrench, English];
 
     public string Code { get; }
     public string DisplayName { get; }

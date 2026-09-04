@@ -37,9 +37,15 @@ public class WhenUsingLyricLanguage
     [TestCase("FR_la", "fr_LA", "Louisiana French")]
     [TestCase("fr_QC", "fr_QC", "Québécois French")]
     [TestCase("FR_qc", "fr_QC", "Québécois French")]
+    [TestCase("fr_AC", "fr_AC", "Acadian French")]
+    [TestCase("FR_ac", "fr_AC", "Acadian French")]
     [TestCase("en", "en", "English")]
     [TestCase("Louisiana French", "fr_LA", "Louisiana French")]
     [TestCase("louisiana french", "fr_LA", "Louisiana French")]
+    [TestCase("Acadian French", "fr_AC", "Acadian French")]
+    [TestCase("acadian french", "fr_AC", "Acadian French")]
+    [TestCase("Québécois French", "fr_QC", "Québécois French")]
+    [TestCase("québécois french", "fr_QC", "Québécois French")]
     public void ShouldResolveKnownLanguagesFromCodeOrDisplayName(string input, string expectedCode, string expectedDisplayName)
     {
         var language = LyricLanguage.FromCode(input);

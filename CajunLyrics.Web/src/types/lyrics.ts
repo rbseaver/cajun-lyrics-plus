@@ -7,6 +7,7 @@ export const LYRIC_LANGUAGES: LyricLanguage[] = [
   { code: 'fr', displayName: 'French' },
   { code: 'fr_LA', displayName: 'Louisiana French' },
   { code: 'fr_QC', displayName: 'Québécois French' },
+  { code: 'fr_AC', displayName: 'Acadian French' },
   { code: 'en', displayName: 'English' },
 ];
 
