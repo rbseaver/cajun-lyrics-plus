@@ -19,14 +19,18 @@ public class WhenUsingLyricLanguage
         LyricLanguage.QuebecoisFrench.Code.Should().Be("fr_QC");
         LyricLanguage.QuebecoisFrench.DisplayName.Should().Be("Québécois French");
 
+        LyricLanguage.AcadianFrench.Code.Should().Be("fr_AC");
+        LyricLanguage.AcadianFrench.DisplayName.Should().Be("Acadian French");
+
         LyricLanguage.English.Code.Should().Be("en");
         LyricLanguage.English.DisplayName.Should().Be("English");
 
-        LyricLanguage.All.Should().HaveCount(4)
+        LyricLanguage.All.Should().HaveCount(5)
             .And.Contain([
                 LyricLanguage.French,
                 LyricLanguage.LouisianaFrench,
                 LyricLanguage.QuebecoisFrench,
+                LyricLanguage.AcadianFrench,
                 LyricLanguage.English
             ]);
     }
