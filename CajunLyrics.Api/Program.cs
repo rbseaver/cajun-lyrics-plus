@@ -22,15 +22,8 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
-// Register HttpClientOptions as configuration management for ILyricsService
+// Register HttpClientOptions as configuration management for ILyricsClient
 builder.Services.Configure<HttpClientOptions>(builder.Configuration.GetSection("HttpClient"));
-
-builder.Services.AddHttpClient(nameof(CajunLyricsService), (sp, client) =>
-{
-    var options = sp.GetRequiredService<IOptions<HttpClientOptions>>().Value;
-    client.BaseAddress = options.BaseAddress;
-    client.DefaultRequestHeaders.UserAgent.ParseAdd("CajunLyrics.Api/1.0");
-});
 
 builder.Services.AddHttpClient(nameof(CajunLyricsClient), (sp, client) =>
 {

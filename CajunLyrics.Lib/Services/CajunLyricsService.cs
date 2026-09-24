@@ -1,11 +1,12 @@
 ﻿using CajunLyrics.Lib.Helpers;
+using CajunLyrics.Lib.Http;
 using CajunLyrics.Lib.Models;
 using System.Text;
 using System.Xml.Serialization;
 
 namespace CajunLyrics.Lib.Services
 {
-    public class CajunLyricsService(IHttpClientFactory httpClientFactory)
+    public class CajunLyricsService(ILyricsClient lyricsClient)
 : ILyricsService
     {
         private static readonly Dictionary<Type, XmlSerializer> Serializers = new()
@@ -36,11 +37,9 @@ namespace CajunLyrics.Lib.Services
 
         private async Task<string> FetchXmlResponse(string resource, LyricSearchRequest request)
         {
-            var client = httpClientFactory.CreateClient(nameof(CajunLyricsService));
-
             string requestUri = RequestUtilities.BuildRequestUri(resource, request);
 
-            var response = await client.GetAsync(requestUri);
+            var response = await lyricsClient.GetLyricsAsync(new Uri(requestUri, UriKind.Relative));
 
             response.EnsureSuccessStatusCode();
 

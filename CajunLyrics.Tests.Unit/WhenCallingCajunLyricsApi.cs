@@ -21,7 +21,7 @@ namespace CajunLyrics.Tests.Unit
         public void SetUp()
         {
             fixture = new Fixture();
-            testLyricsService = new CajunLyricsService(MockHttpClientFactory);
+            testLyricsService = new CajunLyricsService(sut);
         }
 
         [Test]

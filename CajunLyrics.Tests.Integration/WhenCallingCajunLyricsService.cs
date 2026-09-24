@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
 using System.Runtime.CompilerServices;
 using CajunLyrics.Lib.Configuration;
+using CajunLyrics.Lib.Http;
 
 namespace CajunLyrics.Tests.Integration
 {
@@ -24,11 +25,12 @@ namespace CajunLyrics.Tests.Integration
             var services = new ServiceCollection();
             services.Configure<HttpClientOptions>(configuration.GetSection("HttpClient"));
             services.AddHttpClient(
-                nameof(CajunLyricsService),
+                nameof(CajunLyricsClient),
                 (sp, client) =>
                 {
                     client.BaseAddress = new Uri("http://api.cajunlyrics.com/");
                 });
+            services.AddScoped<ILyricsClient, CajunLyricsClient>();
             services.AddScoped<ILyricsService, CajunLyricsService>();
             var provider = services.BuildServiceProvider();
             cajunLyricsService = provider.GetRequiredService<ILyricsService>();
