@@ -80,11 +80,12 @@ Dev server detail: Vite proxies `/api/*` → `https://localhost:7156` with `secu
 
 ## CI and releases
 
-`.gitlab-ci.yml` runs on pushes to `main` and on version tags, with two test gates plus a release gate:
+`.gitlab-ci.yml` runs on pushes to `main` and on version tags, with three gates plus a release gate:
 
 - `frontend_tests` — `node:22`, `npm ci`, `npm test -- --run --coverage` in `CajunLyrics.Web`.
 - `unit_tests` — `dotnet test` on the unit project with `XPlat Code Coverage`.
-- `release_gate` — runs on tags only; blocks a release if either suite failed.
+- `image_build` — `docker:29` + `docker:29-dind`, builds the container image so Dockerfile breakage shows up red. Build only, no push until a registry is picked.
+- `release_gate` — runs on tags only; blocks a release if any gate failed.
 
 **The integration suite is deliberately not in the CI gate** (per README: network-dependent and flaky). Treat it as a local check.
 

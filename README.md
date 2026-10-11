@@ -53,7 +53,8 @@ The GitLab pipeline runs on both pushes to `main` and on version tags.
 - it collects frontend coverage with V8
 - it restores the .NET solution and runs the existing NUnit unit test suite
 - it collects backend coverage with `XPlat Code Coverage`
-- it blocks release tags if either test suite fails
+- it builds the Docker image (build only, no push) so Dockerfile breakage shows up early
+- it blocks release tags if any gate fails
 
 The integration test suite is intentionally not part of the CI gate right now because it is more network-dependent and can be flaky.
 

@@ -38,13 +38,27 @@ unit_tests:
       - test-results/
     expire_in: 7 days
 
+# Builds the image so Dockerfile breakage shows up as a red pipeline.
+# Build only — no push until a registry is chosen.
+image_build:
+  stage: test
+  image: docker:29
+  services:
+    - docker:29-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+  cache: {}
+  script:
+    - docker build --file CajunLyrics.Api/Dockerfile --tag cajunlyrics-plus:ci .
+
 release_gate:
   stage: release-check
   image: mcr.microsoft.com/dotnet/sdk:10.0
   needs:
     - frontend_tests
     - unit_tests
+    - image_build
   rules:
     - if: '$CI_COMMIT_TAG'
   script:
-    - echo "Release tag ${CI_COMMIT_TAG} passed the frontend and backend unit test gates."
+    - echo "Release tag ${CI_COMMIT_TAG} passed the test and image build gates."
