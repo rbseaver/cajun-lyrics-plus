@@ -22,4 +22,6 @@ ENV ASPNETCORE_ENVIRONMENT=Docker
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 COPY --from=build /app/publish .
+# The app is stateless, so it can run as the image's non-root user.
+USER $APP_UID
 ENTRYPOINT ["dotnet", "CajunLyrics.Api.dll"]
