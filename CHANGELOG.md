@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.0](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/compare/v1.1.0...v1.2.0) (2026-10-11)
+
+### Features
+
+* **api:** add /health endpoint for container probes ([07e1267](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/commit/07e12678ff568cf026c7c6e1014023cb9f01190b))
+
+### Bug Fixes
+
+* **api:** gate https redirection on development only ([8821d8c](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/commit/8821d8c51816df722e0ad339ecd7c67a3ff60d22))
+
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 ## [1.1.0](https://gitlab.com/rbseaver/cajun-lyrics-plus/compare/v1.0.0...v1.1.0) (2026-09-04)
