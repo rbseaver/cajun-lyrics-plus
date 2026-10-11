@@ -76,7 +76,7 @@ npm run release
 git push origin main --follow-tags
 ```
 
-Dev server detail: Vite proxies `/api/*` → `https://localhost:7156` with `secure: false`, and the API allows CORS from `http://localhost:5173` via the `ReactDevServer` policy (Development only). The `Docker` environment skips `UseHttpsRedirection`.
+Dev server detail: Vite proxies `/api/*` → `https://localhost:7156` with `secure: false`, and the API allows CORS from `http://localhost:5173` via the `ReactDevServer` policy (Development only). HTTPS redirection is Development-only — in the container (`ASPNETCORE_ENVIRONMENT=Docker`) and in Production the proxy terminates TLS, so the app never redirects itself.
 
 ## CI and releases
 

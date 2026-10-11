@@ -41,7 +41,9 @@ builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
-if (!app.Environment.IsEnvironment("Docker"))
+// Only Development gets HTTP→HTTPS redirection. In every other environment the
+// app runs behind a proxy that terminates TLS, and redirecting here would fight it.
+if (app.Environment.IsDevelopment())
 {
     app.UseHttpsRedirection();
 }

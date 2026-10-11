@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using CajunLyrics.Lib.Models;
 using FluentAssertions;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 
 [assembly: Parallelizable(ParallelScope.None)]
@@ -45,6 +46,28 @@ public class WhenCallingLyricsEndpoint
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var content = await response.Content.ReadAsStringAsync();
         content.Should().Be("Healthy");
+    }
+
+    [Test]
+    public async Task ShouldNotRedirectToHttpsOutsideDevelopment()
+    {
+        Environment.SetEnvironmentVariable("ASPNETCORE_HTTPS_PORT", "443");
+        try
+        {
+            using var productionFactory = factory.WithWebHostBuilder(builder =>
+                builder.UseEnvironment("Production"));
+            using var productionClient = productionFactory.CreateClient(
+                new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+
+            var response = await productionClient.GetAsync("/");
+
+            response.Headers.Location.Should().BeNull(
+                "only Development may issue an HTTPS redirect");
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("ASPNETCORE_HTTPS_PORT", null);
+        }
     }
 
     [Test]
