@@ -35,6 +35,10 @@ builder.Services.AddHttpClient(nameof(CajunLyricsClient), (sp, client) =>
 builder.Services.AddScoped<ILyricsService, CajunLyricsService>();
 builder.Services.AddScoped<ILyricsClient, CajunLyricsClient>();
 
+// Probe endpoint for container hosts; kept as a self-check so a flaky
+// upstream never causes the platform to restart-loop the app.
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
 
 if (!app.Environment.IsEnvironment("Docker"))
@@ -59,6 +63,7 @@ app.UseStaticFiles();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/health");
 app.MapFallbackToFile("index.html");
 
 app.Run();

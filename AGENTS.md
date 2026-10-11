@@ -31,6 +31,7 @@ Endpoints:
 ```text
 GET /api/Lyrics/lyric?artist=...&title=...&language=...   # one lyric, 404 when missing
 GET /api/Lyrics/search?artist=...&title=...&language=...  # multi-result search
+GET /health                                               # self liveness probe for container hosts
 ```
 
 `language` binds to the `LyricLanguage` smart enum (code/display name, implicit conversions to and from `string`) and maps to the upstream query parameter `lf`, not `language`.

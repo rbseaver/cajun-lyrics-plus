@@ -38,6 +38,16 @@ public class WhenCallingLyricsEndpoint
     }
 
     [Test]
+    public async Task ShouldReturnHealthyFromHealthProbe()
+    {
+        var response = await client.GetAsync("/health");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var content = await response.Content.ReadAsStringAsync();
+        content.Should().Be("Healthy");
+    }
+
+    [Test]
     public async Task ShouldReturnLyricResultForKnownSong()
     {
         var response = await client.GetAsync("/api/Lyrics/lyric?artist=feufollet&title=Blues%20de%20Dix%20Ans");
