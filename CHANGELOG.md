@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/compare/v1.2.0...v1.3.0) (2026-10-22)
+
+### Features
+
+* **api:** search regional French languages by default ([c70b72f](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/commit/c70b72f6bda30f68a8e953772797a248e67b5c9c))
+* **web:** move language selection behind advanced search ([eda0ff8](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/commit/eda0ff87d55124ebff2391d4465f43eb3a9dd53d))
+
 ## [1.2.0](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/compare/v1.1.0...v1.2.0) (2026-10-11)
 
 ### Features
