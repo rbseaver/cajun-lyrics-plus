@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { fetchLyric, fetchLyricSearchResults, LyricsApiError } from '../api/lyricsApi';
 import type { LyricResult, LyricSearchRequest } from '../types/lyrics';
 
@@ -27,6 +27,7 @@ const INITIAL_STATE: UseLyricSearchState = {
 
 export function useLyricSearch(): UseLyricSearchReturn {
   const [state, setState] = useState<UseLyricSearchState>(INITIAL_STATE);
+  const lastSearchRef = useRef<LyricSearchRequest | null>(null);
 
   const search = useCallback(async (request: LyricSearchRequest) => {
     setState({ status: 'loading', result: null, results: [], errorMessage: null });
@@ -46,6 +47,7 @@ export function useLyricSearch(): UseLyricSearchReturn {
   }, []);
 
   const searchResults = useCallback(async (request: LyricSearchRequest) => {
+    lastSearchRef.current = request;
     setState({ status: 'loading', result: null, results: [], errorMessage: null });
 
     try {
@@ -60,7 +62,7 @@ export function useLyricSearch(): UseLyricSearchReturn {
         const lyric = await fetchLyric({
           artist: request.artist ?? results[0].artist,
           title: request.title ?? results[0].title,
-          language: request.language,
+          languages: request.languages,
         });
         setState({ status: 'success', result: lyric, results: [], errorMessage: null });
         return;
@@ -87,7 +89,11 @@ export function useLyricSearch(): UseLyricSearchReturn {
     setState({ status: 'loading', result: null, results: [], errorMessage: null });
 
     try {
-      const lyric = await fetchLyric({ artist: result.artist, title: result.title });
+      const lyric = await fetchLyric({
+        artist: result.artist,
+        title: result.title,
+        languages: lastSearchRef.current?.languages,
+      });
       setState({ status: 'success', result: lyric, results: [], errorMessage: null });
     } catch (err) {
       if (err instanceof LyricsApiError && err.status === 404) {
@@ -100,7 +106,10 @@ export function useLyricSearch(): UseLyricSearchReturn {
     }
   }, []);
 
-  const reset = useCallback(() => setState(INITIAL_STATE), []);
+  const reset = useCallback(() => {
+    lastSearchRef.current = null;
+    setState(INITIAL_STATE);
+  }, []);
 
   return { ...state, search, searchResults, selectResult, reset };
 }

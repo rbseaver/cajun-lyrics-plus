@@ -11,10 +11,16 @@ export const LYRIC_LANGUAGES: LyricLanguage[] = [
   { code: 'en', displayName: 'English' },
 ];
 
+export const ANY_LANGUAGE = 'all';
+
 export interface LyricSearchRequest {
   artist?: string;
   title?: string;
-  language?: string;
+  /**
+   * Languages to search. When omitted, the API defaults to Louisiana,
+   * Acadian, and Québécois French; ANY_LANGUAGE disables the filter.
+   */
+  languages?: string[];
 }
 
 export interface LyricResult {

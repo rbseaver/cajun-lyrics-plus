@@ -100,4 +100,79 @@ describe('useLyricSearch', () => {
 
     expect(result.current.errorMessage).toBe('Network unavailable');
   });
+
+  it('repeats the language param for a multi-language search', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          lyricResults: [
+            { id: 1, artist: 'Zachary Richard', title: 'Le Fou' },
+            { id: 2, artist: 'Zachary Richard', title: 'Travailler C\'est Trop Dur' },
+          ],
+        }),
+      }),
+    );
+
+    const { result } = renderHook(() => useLyricSearch());
+
+    await act(async () => {
+      await result.current.searchResults({
+        artist: 'Zachary Richard',
+        languages: ['fr_LA', 'en'],
+      });
+    });
+
+    expect(result.current.status).toBe('results');
+    expect(fetch).toHaveBeenCalledWith(
+      '/api/Lyrics/search?artist=Zachary+Richard&language=fr_LA&language=en',
+      { headers: { Accept: 'application/json' } },
+    );
+  });
+
+  it('keeps the search languages when selecting a result', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: async () => ({
+            lyricResults: [
+              { id: 1, artist: 'Feufollet', title: 'Blues de Dix Ans' },
+              { id: 2, artist: 'Feufollet', title: 'Other Song' },
+            ],
+          }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: async () => ({
+            id: 1,
+            artist: 'Feufollet',
+            title: 'Blues de Dix Ans',
+            lyric: 'Dix ans, dix ans',
+          }),
+        }),
+    );
+
+    const { result } = renderHook(() => useLyricSearch());
+
+    await act(async () => {
+      await result.current.searchResults({ artist: 'Feufollet', languages: ['en'] });
+    });
+    await act(async () => {
+      await result.current.selectResult({ id: 1, artist: 'Feufollet', title: 'Blues de Dix Ans' });
+    });
+
+    expect(result.current.status).toBe('success');
+    expect(fetch).toHaveBeenNthCalledWith(
+      2,
+      '/api/Lyrics/lyric?artist=Feufollet&title=Blues+de+Dix+Ans&language=en',
+      { headers: { Accept: 'application/json' } },
+    );
+  });
 });

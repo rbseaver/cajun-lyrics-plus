@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { LYRIC_LANGUAGES } from '../types/lyrics';
+import { ANY_LANGUAGE, LYRIC_LANGUAGES } from '../types/lyrics';
 import type { LyricSearchRequest } from '../types/lyrics';
 
 interface SearchFormProps {
@@ -10,6 +10,7 @@ interface SearchFormProps {
 export function SearchForm({ onSearch, isLoading }: SearchFormProps) {
   const [artist, setArtist] = useState('');
   const [title, setTitle] = useState('');
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const [language, setLanguage] = useState('');
 
   function handleSubmit(e: FormEvent) {
@@ -18,8 +19,13 @@ export function SearchForm({ onSearch, isLoading }: SearchFormProps) {
     onSearch({
       artist: artist.trim() || undefined,
       title: title.trim() || undefined,
-      language: language || undefined,
+      languages: language ? [language] : undefined,
     });
+  }
+
+  function toggleAdvanced() {
+    if (showAdvanced) setLanguage('');
+    setShowAdvanced(!showAdvanced);
   }
 
   return (
@@ -54,25 +60,56 @@ export function SearchForm({ onSearch, isLoading }: SearchFormProps) {
             autoComplete="off"
           />
         </div>
+      </div>
 
-        <div className="field-group field-group--narrow">
-          <label htmlFor="language-select" className="field-label">
-            Language
-          </label>
-          <select
-            id="language-select"
-            className="field-input field-select"
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
+      <div className="search-form__advanced">
+        <button
+          type="button"
+          className="search-form__advanced-toggle"
+          aria-expanded={showAdvanced}
+          aria-controls={showAdvanced ? 'advanced-search-fields' : undefined}
+          onClick={toggleAdvanced}
+        >
+          <svg
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <option value="">Any</option>
-            {LYRIC_LANGUAGES.map((lang) => (
-              <option key={lang.code} value={lang.code}>
-                {lang.displayName}
-              </option>
-            ))}
-          </select>
-        </div>
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+          Advanced Search
+        </button>
+
+        {showAdvanced && (
+          <div id="advanced-search-fields" className="search-form__advanced-fields">
+            <div className="field-group field-group--narrow">
+              <label htmlFor="language-select" className="field-label">
+                Language
+              </label>
+              <select
+                id="language-select"
+                className="field-input field-select"
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+              >
+                <option value="">Louisiana, Acadian &amp; Québecois French (default)</option>
+                <option value={ANY_LANGUAGE}>Any language</option>
+                {LYRIC_LANGUAGES.map((lang) => (
+                  <option key={lang.code} value={lang.code}>
+                    {lang.displayName}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
       </div>
 
       <button

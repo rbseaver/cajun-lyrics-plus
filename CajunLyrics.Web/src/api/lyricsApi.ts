@@ -17,7 +17,9 @@ function buildSearchParams(request: LyricSearchRequest): URLSearchParams {
 
   if (request.artist) params.set('artist', request.artist);
   if (request.title) params.set('title', request.title);
-  if (request.language) params.set('language', request.language);
+  for (const language of request.languages ?? []) {
+    params.append('language', language);
+  }
 
   return params;
 }

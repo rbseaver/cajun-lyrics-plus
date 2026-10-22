@@ -55,4 +55,63 @@ describe('App integration', () => {
     );
     expect(screen.getByText(/là on travaille/i)).toBeInTheDocument();
   });
+
+  it('runs an advanced English search and keeps the language when picking a result', async () => {
+    const user = userEvent.setup();
+
+    const searchResultsResponse = {
+      ok: true,
+      status: 200,
+      json: async () => ({
+        lyricResults: [
+          { id: 1, artist: 'Zachary Richard', title: 'American Tune' },
+          { id: 2, artist: 'Zachary Richard', title: 'Other English Song' },
+        ],
+      }),
+    };
+
+    const lyricResponse = {
+      ok: true,
+      status: 200,
+      json: async () => ({
+        id: 1,
+        artist: 'Zachary Richard',
+        title: 'American Tune',
+        lyric: 'Let us be lovers',
+      }),
+    };
+
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValueOnce(searchResultsResponse).mockResolvedValueOnce(lyricResponse),
+    );
+
+    render(<App />);
+
+    await user.type(screen.getByLabelText(/artist/i), 'Zachary Richard');
+    await user.click(screen.getByRole('button', { name: /advanced search/i }));
+    await user.selectOptions(screen.getByLabelText(/^language$/i), 'en');
+    await user.click(screen.getByRole('button', { name: /search for lyrics/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText('American Tune')).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: /american tune/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/let us be lovers/i)).toBeInTheDocument();
+    });
+
+    expect(fetch).toHaveBeenNthCalledWith(
+      1,
+      '/api/Lyrics/search?artist=Zachary+Richard&language=en',
+      { headers: { Accept: 'application/json' } },
+    );
+    expect(fetch).toHaveBeenNthCalledWith(
+      2,
+      '/api/Lyrics/lyric?artist=Zachary+Richard&title=American+Tune&language=en',
+      { headers: { Accept: 'application/json' } },
+    );
+  });
 });
