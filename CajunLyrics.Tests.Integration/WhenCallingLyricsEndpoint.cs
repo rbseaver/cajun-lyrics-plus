@@ -27,8 +27,10 @@ public class WhenCallingLyricsEndpoint
     [SetUp]
     public async Task SetUp()
     {
-        // Avoid bursting upstream third-party API in rapid succession
-        await Task.Delay(1000);
+        // The upstream API rate-limits at roughly 6 requests per 10 seconds per IP,
+        // and the default language search fans out to 3 requests — back off enough
+        // between tests to stay inside the window.
+        await Task.Delay(4000);
     }
 
     [OneTimeTearDown]
@@ -102,6 +104,26 @@ public class WhenCallingLyricsEndpoint
         var response = await client.GetAsync("/api/Lyrics/lyric?artist=NonExistentArtist9999&title=NonExistentTitle9999");
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Test]
+    public async Task ShouldSearchEveryLanguageWhenAllSpecified()
+    {
+        var response = await client.GetAsync("/api/Lyrics/search?artist=Zachary%20Richard&language=all");
+        var content = await response.Content.ReadAsStringAsync();
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK, because: content);
+        content.Should().Contain("Zachary Richard");
+    }
+
+    [Test]
+    public async Task ShouldMergeSearchResultsAcrossRequestedLanguages()
+    {
+        var response = await client.GetAsync("/api/Lyrics/search?artist=Zachary%20Richard&language=fr_LA&language=en");
+        var content = await response.Content.ReadAsStringAsync();
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK, because: content);
+        content.Should().Contain("Zachary Richard");
     }
 
     [Test]

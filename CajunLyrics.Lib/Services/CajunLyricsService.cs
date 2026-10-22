@@ -17,17 +17,87 @@ namespace CajunLyrics.Lib.Services
 
         public async Task<LyricResult> GetSongLyricsAsync(LyricSearchRequest request)
         {
-            return await DeserializeResultsAsync<LyricResult>("LyricDirectSearch.php", request);
+            var languages = ResolveLanguages(request);
+
+            var results = await FetchAvailableResultsAsync<LyricResult>("LyricDirectSearch.php", request, languages);
+
+            return results.FirstOrDefault(result => result.HasLyric) ?? results.First();
         }
 
         public async Task<LyricSearchResult> GetSearchResultsAsync(LyricSearchRequest request)
         {
-            return await DeserializeResultsAsync<LyricSearchResult>("LyricSearchList.php", request);
+            var languages = ResolveLanguages(request);
+
+            var results = await FetchAvailableResultsAsync<LyricSearchResult>("LyricSearchList.php", request, languages);
+
+            return new LyricSearchResult
+            {
+                LyricResults = results
+                    .SelectMany(result => result.LyricResults ?? [])
+                    .DistinctBy(result => result.Id)
+                    .ToList()
+            };
         }
 
-        private async Task<T> DeserializeResultsAsync<T>(string resource, LyricSearchRequest request)
+        /// <summary>
+        /// The upstream API accepts a single language per request, so multi-language
+        /// searches resolve one request per language and the results are merged.
+        /// An empty selection falls back to <see cref="LyricLanguage.DefaultSearch"/>;
+        /// <see cref="LyricLanguage.Any"/> resolves to a single unfiltered request.
+        /// </summary>
+        private static IReadOnlyList<LyricLanguage?> ResolveLanguages(LyricSearchRequest request)
         {
-            var xml = await FetchXmlResponse(resource, request);
+            var languages = request.Languages?
+                .DistinctBy(language => language.Code, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (languages is null || languages.Count == 0)
+            {
+                return LyricLanguage.DefaultSearch;
+            }
+
+            if (languages.Any(language => language == LyricLanguage.Any))
+            {
+                return [null];
+            }
+
+            return languages;
+        }
+
+        /// <summary>
+        /// Requests the given languages one at a time — the upstream rate-limits per
+        /// IP, so bursts are avoided — and tolerates individual failures: a throttled
+        /// or failing language contributes nothing rather than failing the whole
+        /// search. Only when every request fails is the last error rethrown.
+        /// </summary>
+        private async Task<List<T>> FetchAvailableResultsAsync<T>(string resource, LyricSearchRequest request, IReadOnlyList<LyricLanguage?> languages)
+        {
+            var results = new List<T>();
+            HttpRequestException? lastError = null;
+
+            foreach (var language in languages)
+            {
+                try
+                {
+                    results.Add(await FetchResultAsync<T>(resource, request, language));
+                }
+                catch (HttpRequestException ex)
+                {
+                    lastError = ex;
+                }
+            }
+
+            if (results.Count == 0 && lastError is not null)
+            {
+                throw lastError;
+            }
+
+            return results;
+        }
+
+        private async Task<T> FetchResultAsync<T>(string resource, LyricSearchRequest request, LyricLanguage? language)
+        {
+            var xml = await FetchXmlResponse(resource, request, language);
 
             using var reader = new StringReader(xml);
 
@@ -35,9 +105,9 @@ namespace CajunLyrics.Lib.Services
                 throw new InvalidOperationException($"Failed to deserialize {typeof(T).Name} from XML");
         }
 
-        private async Task<string> FetchXmlResponse(string resource, LyricSearchRequest request)
+        private async Task<string> FetchXmlResponse(string resource, LyricSearchRequest request, LyricLanguage? language)
         {
-            string requestUri = RequestUtilities.BuildRequestUri(resource, request);
+            string requestUri = RequestUtilities.BuildRequestUri(resource, request, language);
 
             var response = await lyricsClient.GetLyricsAsync(new Uri(requestUri, UriKind.Relative));
 

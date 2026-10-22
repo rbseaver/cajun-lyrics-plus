@@ -29,5 +29,13 @@ namespace CajunLyrics.Lib.Models
 
         [XmlElement("Lyric")]
         public string? Lyric { get; set; }
+
+        /// <summary>
+        /// True when the response contains an actual lyric rather than an
+        /// empty body or the upstream "Not found" marker.
+        /// </summary>
+        [XmlIgnore]
+        public bool HasLyric => !string.IsNullOrWhiteSpace(Lyric)
+            && !string.Equals(Lyric.Trim(), "Not found", StringComparison.OrdinalIgnoreCase);
     }
 }

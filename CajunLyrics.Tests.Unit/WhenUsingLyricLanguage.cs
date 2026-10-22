@@ -25,14 +25,36 @@ public class WhenUsingLyricLanguage
         LyricLanguage.English.Code.Should().Be("en");
         LyricLanguage.English.DisplayName.Should().Be("English");
 
-        LyricLanguage.All.Should().HaveCount(5)
+        LyricLanguage.All.Should().HaveCount(6)
             .And.Contain([
                 LyricLanguage.French,
                 LyricLanguage.LouisianaFrench,
                 LyricLanguage.QuebecoisFrench,
                 LyricLanguage.AcadianFrench,
-                LyricLanguage.English
+                LyricLanguage.English,
+                LyricLanguage.Any
             ]);
+    }
+
+    [Test]
+    public void ShouldHaveAnyLanguageOption()
+    {
+        LyricLanguage.Any.Code.Should().Be("all");
+        LyricLanguage.Any.DisplayName.Should().Be("Any language");
+
+        LyricLanguage.FromCode("all").Should().Be(LyricLanguage.Any);
+        LyricLanguage.FromCode("Any language").Should().Be(LyricLanguage.Any);
+        LyricLanguage.TryParse("ALL", null, out var result).Should().BeTrue();
+        result.Should().Be(LyricLanguage.Any);
+    }
+
+    [Test]
+    public void ShouldDefaultToFrenchRegionalLanguages()
+    {
+        LyricLanguage.DefaultSearch.Should().Equal(
+            LyricLanguage.LouisianaFrench,
+            LyricLanguage.AcadianFrench,
+            LyricLanguage.QuebecoisFrench);
     }
 
     [TestCase("fr", "fr", "French")]
@@ -44,6 +66,9 @@ public class WhenUsingLyricLanguage
     [TestCase("fr_AC", "fr_AC", "Acadian French")]
     [TestCase("FR_ac", "fr_AC", "Acadian French")]
     [TestCase("en", "en", "English")]
+    [TestCase("all", "all", "Any language")]
+    [TestCase("ALL", "all", "Any language")]
+    [TestCase("Any language", "all", "Any language")]
     [TestCase("Louisiana French", "fr_LA", "Louisiana French")]
     [TestCase("louisiana french", "fr_LA", "Louisiana French")]
     [TestCase("Acadian French", "fr_AC", "Acadian French")]

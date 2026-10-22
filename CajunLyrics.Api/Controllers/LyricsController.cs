@@ -10,18 +10,18 @@ namespace CajunLyrics.Api.Controllers
     {
         [HttpGet]
         [Route("lyric")]
-        public async Task<IActionResult> Get([FromQuery] string artist, [FromQuery] string title, [FromQuery] LyricLanguage? language)
+        public async Task<IActionResult> Get([FromQuery] string artist, [FromQuery] string title, [FromQuery] List<LyricLanguage>? language)
         {
             var request = new LyricSearchRequest
             {
                 Artist = artist,
                 Title = title,
-                Language = language
+                Languages = language
             };
             try
             {
                 var result = await cajunLyricsService.GetSongLyricsAsync(request);
-                if (string.IsNullOrWhiteSpace(result.Lyric) || string.Equals(result.Lyric.Trim(), "Not found", StringComparison.OrdinalIgnoreCase))
+                if (!result.HasLyric)
                 {
                     return NotFound($"Lyrics not found for '{artist}' and '{title}'");
                 }
@@ -35,13 +35,13 @@ namespace CajunLyrics.Api.Controllers
 
         [HttpGet]
         [Route("search")]
-        public async Task<IActionResult> Search([FromQuery] string? artist, [FromQuery] string? title, [FromQuery] LyricLanguage? language)
+        public async Task<IActionResult> Search([FromQuery] string? artist, [FromQuery] string? title, [FromQuery] List<LyricLanguage>? language)
         {
             var request = new LyricSearchRequest
             {
                 Artist = artist,
                 Title = title,
-                Language = language
+                Languages = language
             };
 
             try

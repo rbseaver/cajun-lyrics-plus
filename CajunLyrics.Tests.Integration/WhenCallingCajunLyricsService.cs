@@ -17,8 +17,13 @@ namespace CajunLyrics.Tests.Integration
         private ILyricsService? cajunLyricsService;
 
         [SetUp]
-        public void Setup()
+        public async Task Setup()
         {
+            // The upstream API rate-limits at roughly 6 requests per 10 seconds per IP,
+            // and the default language search fans out to 3 requests — back off enough
+            // between tests to stay inside the window.
+            await Task.Delay(4000);
+
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
                 .Build();
@@ -28,7 +33,7 @@ namespace CajunLyrics.Tests.Integration
                 nameof(CajunLyricsClient),
                 (sp, client) =>
                 {
-                    client.BaseAddress = new Uri("http://api.cajunlyrics.com/");
+                    client.BaseAddress = new Uri("https://api.cajunlyrics.com/");
                 });
             services.AddScoped<ILyricsClient, CajunLyricsClient>();
             services.AddScoped<ILyricsService, CajunLyricsService>();

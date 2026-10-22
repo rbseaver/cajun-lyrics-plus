@@ -14,7 +14,18 @@ public sealed record LyricLanguage : IParsable<LyricLanguage>
     public static readonly LyricLanguage AcadianFrench = new("fr_AC", "Acadian French");
     public static readonly LyricLanguage English = new("en", "English");
 
-    public static readonly IReadOnlyList<LyricLanguage> All = [French, LouisianaFrench, QuebecoisFrench, AcadianFrench, English];
+    /// <summary>
+    /// Pseudo-language meaning "no language filter" — searches every upstream language.
+    /// </summary>
+    public static readonly LyricLanguage Any = new("all", "Any language");
+
+    public static readonly IReadOnlyList<LyricLanguage> All = [French, LouisianaFrench, QuebecoisFrench, AcadianFrench, English, Any];
+
+    /// <summary>
+    /// The languages searched when a request does not specify any:
+    /// Louisiana French, Acadian French, and Québécois French.
+    /// </summary>
+    public static readonly IReadOnlyList<LyricLanguage> DefaultSearch = [LouisianaFrench, AcadianFrench, QuebecoisFrench];
 
     public string Code { get; }
     public string DisplayName { get; }

@@ -1,5 +1,6 @@
 using AutoFixture;
 using CajunLyrics.Api.Controllers;
+using CajunLyrics.Lib;
 using CajunLyrics.Lib.Models;
 using CajunLyrics.Lib.Services;
 using FluentAssertions;
@@ -30,17 +31,49 @@ public class WhenCallingController
     {
         var artist = fixture.Create<string>();
         var title = fixture.Create<string>();
-        var language = LyricLanguage.LouisianaFrench;
+        List<LyricLanguage> languages = [LyricLanguage.LouisianaFrench];
 
         var expectedLyricResult = fixture.Create<LyricResult>();
         cajunLyricsServiceMock.GetSongLyricsAsync(
-            Arg.Is<LyricSearchRequest>(r => r.Artist == artist && r.Title == title && r.Language == language))
+            Arg.Is<LyricSearchRequest>(r => r.Artist == artist && r.Title == title && r.Languages == languages))
             .Returns(Task.FromResult(expectedLyricResult));
 
 
-        var result = (OkObjectResult)await controller.Get(artist, title, language);
+        var result = (OkObjectResult)await controller.Get(artist, title, languages);
 
         result.Value.Should().BeEquivalentTo(expectedLyricResult);
+    }
+
+    [Test]
+    public async Task ShouldDelegateToServiceDefaultsWhenNoLanguageSpecified()
+    {
+        var artist = fixture.Create<string>();
+        var title = fixture.Create<string>();
+
+        var expectedLyricResult = fixture.Create<LyricResult>();
+        cajunLyricsServiceMock.GetSongLyricsAsync(
+            Arg.Is<LyricSearchRequest>(r => r.Artist == artist && r.Title == title && r.Languages == null))
+            .Returns(Task.FromResult(expectedLyricResult));
+
+        var result = (OkObjectResult)await controller.Get(artist, title, null);
+
+        result.Value.Should().BeEquivalentTo(expectedLyricResult);
+    }
+
+    [Test]
+    public async Task ShouldPassMultipleSearchLanguagesThroughToService()
+    {
+        var artist = fixture.Create<string>();
+        List<LyricLanguage> languages = [LyricLanguage.English, LyricLanguage.French];
+
+        var expectedResult = fixture.Create<LyricSearchResult>();
+        cajunLyricsServiceMock.GetSearchResultsAsync(
+            Arg.Is<LyricSearchRequest>(r => r.Artist == artist && r.Languages == languages))
+            .Returns(Task.FromResult(expectedResult));
+
+        var result = (OkObjectResult)await controller.Search(artist, null, languages);
+
+        result.Value.Should().BeEquivalentTo(expectedResult);
     }
 
     [Test]
@@ -48,17 +81,17 @@ public class WhenCallingController
     {
         var artist = fixture.Create<string>();
         var title = fixture.Create<string>();
-        var language = LyricLanguage.French;
+        List<LyricLanguage> languages = [LyricLanguage.French];
 
         var expectedLyricResult = fixture.Build<LyricResult>()
             .With(l => l.Lyric, string.Empty)
             .Create();
         cajunLyricsServiceMock.GetSongLyricsAsync(
             Arg.Is<LyricSearchRequest>(
-                r => r.Artist == artist && r.Title == title && r.Language == language))
+                r => r.Artist == artist && r.Title == title && r.Languages == languages))
             .Returns(Task.FromResult(expectedLyricResult));
 
-        var result = (NotFoundObjectResult)await controller.Get(artist, title, language);
+        var result = (NotFoundObjectResult)await controller.Get(artist, title, languages);
 
         result.Value.Should().Be($"Lyrics not found for '{artist}' and '{title}'");
     }
@@ -68,12 +101,12 @@ public class WhenCallingController
     {
         var artist = fixture.Create<string>();
         var title = fixture.Create<string>();
-        var language = LyricLanguage.QuebecoisFrench;
+        List<LyricLanguage> languages = [LyricLanguage.QuebecoisFrench];
 
         cajunLyricsServiceMock.GetSongLyricsAsync(Arg.Any<LyricSearchRequest>())
             .Throws<InvalidOperationException>();
 
-        var result = (ObjectResult)await controller.Get(artist, title, language);
+        var result = (ObjectResult)await controller.Get(artist, title, languages);
 
         result.StatusCode.Should().Be(500);
         result.Value.Should().Be("An error occurred while attempting to retrieve lyrics.");
