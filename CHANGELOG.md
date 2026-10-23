@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/compare/v1.3.0...v1.4.0) (2026-10-23)
+
+### Features
+
+* **api:** stamp matched language on lyric results ([9e4996f](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/commit/9e4996f62d4bc739da3aede371aa22337ba0a560))
+* **web:** show matched language on lyric card ([a462453](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/commit/a4624534823f422bbfa065767baee2c1ea433056))
+
 ## [1.3.0](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/compare/v1.2.0...v1.3.0) (2026-10-22)
 
 ### Features

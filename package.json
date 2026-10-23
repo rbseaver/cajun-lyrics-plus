@@ -1,7 +1,7 @@
 {
   "name": "cajun-lyrics-plus",
   "private": true,
-  "version": "1.3.0",
+  "version": "1.4.0",
   "scripts": {
     "release": "release-it",
     "docker:build": "docker build --file CajunLyrics.Api/Dockerfile --tag cajunlyrics-plus:local .",
