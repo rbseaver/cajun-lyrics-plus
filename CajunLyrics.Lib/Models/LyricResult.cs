@@ -31,6 +31,14 @@ namespace CajunLyrics.Lib.Models
         public string? Lyric { get; set; }
 
         /// <summary>
+        /// The language filter that matched this lyric during a multi-language
+        /// search. Not part of the upstream payload — stamped by the service.
+        /// Null when the lyric was found without a language filter.
+        /// </summary>
+        [XmlIgnore]
+        public LyricLanguage? Language { get; set; }
+
+        /// <summary>
         /// True when the response contains an actual lyric rather than an
         /// empty body or the upstream "Not found" marker.
         /// </summary>

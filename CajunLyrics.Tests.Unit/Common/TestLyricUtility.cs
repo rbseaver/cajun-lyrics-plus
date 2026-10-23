@@ -38,6 +38,7 @@ namespace CajunLyrics.Tests.Unit.Common
                 .With(l => l.Artist, artist)
                 .With(l => l.Title, title)
                 .With(l => l.Lyric, () => lyric)
+                .With(l => l.Language, (LyricLanguage?)null) // upstream XML never carries a language
                 .Create();
         }
 

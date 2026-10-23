@@ -96,6 +96,8 @@ public class WhenCallingLyricsEndpoint
         var result = await response.Content.ReadFromJsonAsync<LyricResult>();
         result.Should().NotBeNull();
         result!.Artist.Should().Be("Zachary Richard");
+        result.Language.Should().NotBeNull();
+        result.Language!.Code.Should().Be("fr_LA");
     }
 
     [Test]

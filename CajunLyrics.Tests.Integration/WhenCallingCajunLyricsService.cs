@@ -73,7 +73,11 @@ Toi t’as réalisé le mal tu m’avais fais
 Et comment gros que j’avais misérer
 
 Lyrics Provided by CajunLyrics.com"
-                    }, opts => opts.IgnoringNewlineStyle());
+                    }, opts => opts.IgnoringNewlineStyle().Excluding(l => l.Language));
+
+            // Provenance, not upstream payload: whichever default language matched.
+            result.Language.Should().NotBeNull();
+            LyricLanguage.DefaultSearch.Should().Contain(result.Language);
         }
 
         [Test]

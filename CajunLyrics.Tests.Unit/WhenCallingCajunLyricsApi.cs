@@ -44,6 +44,9 @@ namespace CajunLyrics.Tests.Unit
             };
 
             var lyricResult = TestLyricUtility.BuildLyricResults(artist, title, true).First();
+            // All three default languages answer with this lyric, so the first
+            // (Louisiana French) is the one that matches.
+            lyricResult.Language = LyricLanguage.LouisianaFrench;
             var lyricResultXmlString = TestLyricUtility.BuildLyricResultXmlString(lyricResult);
 
             var responseHeaders = new Dictionary<string, string>
@@ -64,6 +67,7 @@ namespace CajunLyrics.Tests.Unit
 
             // Assert
             result.Should().BeEquivalentTo(lyricResult);
+            result.Language.Should().Be(LyricLanguage.LouisianaFrench);
         }
 
         [Test]
@@ -215,6 +219,7 @@ namespace CajunLyrics.Tests.Unit
 
             var notFound = TestLyricUtility.CreateLyricResult(artist, title, "Not found");
             var acadianLyric = TestLyricUtility.CreateLyricResult(artist, title, fixture.Create<string>());
+            acadianLyric.Language = LyricLanguage.AcadianFrench;
 
             var responseHeaders = new Dictionary<string, string>
             {
@@ -236,6 +241,35 @@ namespace CajunLyrics.Tests.Unit
 
             // Assert
             result.Should().BeEquivalentTo(acadianLyric);
+            result.Language.Should().Be(LyricLanguage.AcadianFrench);
+            MockHttpMessageHandler.VerifyNoOutstandingExpectation();
+        }
+
+        [Test]
+        public async Task ShouldNotStampLanguageWhenSearchingAnyLanguage()
+        {
+            // Arrange
+            var artist = fixture.Create<string>();
+            var title = fixture.Create<string>();
+
+            var lyricSearchRequest = new LyricSearchRequest
+            {
+                Artist = artist,
+                Title = title,
+                Languages = [LyricLanguage.Any]
+            };
+
+            var lyricResult = TestLyricUtility.CreateLyricResult(artist, title, fixture.Create<string>());
+
+            MockHttpMessageHandler.Expect(
+                HttpMethod.Get, $"{MockHttpClient.BaseAddress}LyricDirectSearch.php?artist={artist}&title={title}")
+                .Respond(XmlResponseHeaders, new StringContent(TestLyricUtility.BuildLyricResultXmlString(lyricResult)));
+
+            // Act
+            var result = await testLyricsService.GetSongLyricsAsync(lyricSearchRequest);
+
+            // Assert
+            result.Language.Should().BeNull();
             MockHttpMessageHandler.VerifyNoOutstandingExpectation();
         }
 
@@ -253,6 +287,7 @@ namespace CajunLyrics.Tests.Unit
             };
 
             var acadianLyric = TestLyricUtility.CreateLyricResult(artist, title, fixture.Create<string>());
+            acadianLyric.Language = LyricLanguage.AcadianFrench;
 
             MockHttpMessageHandler.Expect(
                 HttpMethod.Get, $"{MockHttpClient.BaseAddress}LyricDirectSearch.php?artist={artist}&title={title}&lf=fr_LA")

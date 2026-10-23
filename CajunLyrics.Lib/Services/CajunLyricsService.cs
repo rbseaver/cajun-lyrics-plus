@@ -21,7 +21,18 @@ namespace CajunLyrics.Lib.Services
 
             var results = await FetchAvailableResultsAsync<LyricResult>("LyricDirectSearch.php", request, languages);
 
-            return results.FirstOrDefault(result => result.HasLyric) ?? results.First();
+            foreach (var (language, result) in results)
+            {
+                if (result.HasLyric)
+                {
+                    // The upstream payload carries no language, but the filter that
+                    // matched it does — surface that so the UI can show it.
+                    result.Language = language;
+                    return result;
+                }
+            }
+
+            return results[0].Result;
         }
 
         public async Task<LyricSearchResult> GetSearchResultsAsync(LyricSearchRequest request)
@@ -33,7 +44,7 @@ namespace CajunLyrics.Lib.Services
             return new LyricSearchResult
             {
                 LyricResults = results
-                    .SelectMany(result => result.LyricResults ?? [])
+                    .SelectMany(entry => entry.Result.LyricResults ?? [])
                     .DistinctBy(result => result.Id)
                     .ToList()
             };
@@ -68,18 +79,20 @@ namespace CajunLyrics.Lib.Services
         /// Requests the given languages one at a time — the upstream rate-limits per
         /// IP, so bursts are avoided — and tolerates individual failures: a throttled
         /// or failing language contributes nothing rather than failing the whole
-        /// search. Only when every request fails is the last error rethrown.
+        /// search. Only when every request fails is the last error rethrown. Each
+        /// result is paired with the language filter that produced it (null when
+        /// unfiltered).
         /// </summary>
-        private async Task<List<T>> FetchAvailableResultsAsync<T>(string resource, LyricSearchRequest request, IReadOnlyList<LyricLanguage?> languages)
+        private async Task<List<(LyricLanguage? Language, T Result)>> FetchAvailableResultsAsync<T>(string resource, LyricSearchRequest request, IReadOnlyList<LyricLanguage?> languages)
         {
-            var results = new List<T>();
+            var results = new List<(LyricLanguage?, T)>();
             HttpRequestException? lastError = null;
 
             foreach (var language in languages)
             {
                 try
                 {
-                    results.Add(await FetchResultAsync<T>(resource, request, language));
+                    results.Add((language, await FetchResultAsync<T>(resource, request, language)));
                 }
                 catch (HttpRequestException ex)
                 {
