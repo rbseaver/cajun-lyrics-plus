@@ -30,6 +30,8 @@ export interface LyricResult {
   artist?: string;
   title?: string;
   lyric?: string;
+  /** The language filter that matched this lyric; absent when unknown. */
+  language?: LyricLanguage;
 }
 
 export interface LyricSearchResults {

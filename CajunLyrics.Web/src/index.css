@@ -435,6 +435,22 @@ body::before {
 
 .lyric-card__artist { color: var(--color-text-secondary); }
 
+.lyric-card__language {
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.55rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--color-accent-bright);
+  background: var(--color-accent-dim);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+}
+
 .lyric-card__source-link {
   flex-shrink: 0;
   font-size: 0.78rem;

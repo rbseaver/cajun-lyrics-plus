@@ -28,6 +28,7 @@ describe('App integration', () => {
         artist: 'Zachary Richard',
         title: "Travailler C'est Trop Dur",
         lyric: 'Là on travaille\nEt ça va mieux',
+        language: { code: 'fr_LA', displayName: 'Louisiana French' },
       }),
     };
 
@@ -54,6 +55,7 @@ describe('App integration', () => {
       { headers: { Accept: 'application/json' } },
     );
     expect(screen.getByText(/là on travaille/i)).toBeInTheDocument();
+    expect(screen.getByText('Louisiana French')).toBeInTheDocument();
   });
 
   it('runs an advanced English search and keeps the language when picking a result', async () => {
