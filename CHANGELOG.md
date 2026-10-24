@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.1](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/compare/v1.5.0...v1.5.1) (2026-10-24)
+
+### Bug Fixes
+
+* **web:** change empty state text ([7660edf](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/commit/7660edff0bf9e311f9541ae12fde2ad8a1342307))
+
 ## [1.5.0](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/compare/v1.4.1...v1.5.0) (2026-10-24)
 
 ### Features
