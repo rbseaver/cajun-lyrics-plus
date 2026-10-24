@@ -23,7 +23,7 @@ The frontend is a Vite + React 19 + TypeScript SPA located in `CajunLyrics.Web/`
 - **Run tests**: `npm test` (watch) or `npm run test:run` (single pass)
 
 ### API Proxy
-Vite dev server proxies `/api/*` → `https://localhost:7156` with `secure: false` (self-signed cert).
+Vite dev and preview servers proxy `/api/*` → `https://localhost:7156` with `secure: false` (self-signed cert), sharing the `apiProxy` constant in `vite.config.ts` (`preview` does not inherit `server.proxy`).
 The .NET API runs on `https://localhost:7156`.
 
 ### Conventional Commits — Frontend Scopes
