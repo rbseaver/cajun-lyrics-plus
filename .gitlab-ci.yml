@@ -58,8 +58,16 @@ integration_tests:
 image_build:
   stage: test
   image: docker:29
+  # No layer cache in DinD, so a cold run is base-image pulls + npm ci +
+  # restore + publish — about 2-3 minutes. Longer than that is a red flag.
+  timeout: 5m
   services:
-    - docker:29-dind
+    # The inner daemon defaults to MTU 1500 while the runner network caps at
+    # 1360; bigger packets to api.nuget.org (behind Microsoft Front Door) are
+    # then dropped silently and dotnet restore hangs until it times out.
+    # See https://support.gitlab.com/hc/en-us/articles/27528955698972
+    - name: docker:29-dind
+      command: ["--mtu=1360"]
   variables:
     DOCKER_TLS_CERTDIR: "/certs"
   cache: {}
