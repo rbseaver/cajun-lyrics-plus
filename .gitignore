@@ -389,3 +389,6 @@ FodyWeavers.xsd
 .aider*
 
 .idea/
+
+# Project-specific
+NEXT_STEPS.md
