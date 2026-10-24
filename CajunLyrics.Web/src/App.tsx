@@ -29,10 +29,10 @@ function App() {
             <circle cx="6" cy="18" r="3" />
             <circle cx="18" cy="16" r="3" />
           </svg>
-          <h1 className="app-header__title">CajunLyrics+</h1>
+          <h1 className="app-header__title">FrancoLyrics</h1>
         </div>
         <p className="app-header__subtitle">
-          Cajun, Creole &amp; Louisiana French song lyrics
+          Lyrics from French North America
         </p>
       </header>
 
