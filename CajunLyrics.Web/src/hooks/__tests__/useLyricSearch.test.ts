@@ -175,4 +175,43 @@ describe('useLyricSearch', () => {
       { headers: { Accept: 'application/json' } },
     );
   });
+
+  it('fetches lyrics by the resolved song when the list returns a single result', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: async () => ({
+            lyricResults: [{ id: 3728, artist: 'Fayo', title: 'Moonshine' }],
+          }),
+        })
+        .mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          json: async () => ({
+            id: 3728,
+            artist: 'Fayo',
+            title: 'Moonshine',
+            lyric: 'Quand le soleil shine',
+          }),
+        }),
+    );
+
+    const { result } = renderHook(() => useLyricSearch());
+
+    await act(async () => {
+      // The typed title is a near-miss; the list resolved the actual song.
+      await result.current.searchResults({ artist: 'Fayo', title: 'Moonshyne' });
+    });
+
+    expect(result.current.status).toBe('success');
+    expect(fetch).toHaveBeenNthCalledWith(
+      2,
+      '/api/Lyrics/lyric?artist=Fayo&title=Moonshine',
+      { headers: { Accept: 'application/json' } },
+    );
+  });
 });

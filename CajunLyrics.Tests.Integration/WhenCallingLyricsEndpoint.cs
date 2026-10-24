@@ -101,6 +101,23 @@ public class WhenCallingLyricsEndpoint
     }
 
     [Test]
+    public async Task ShouldNotServeADifferentSongThanRequested()
+    {
+        // Regression: upstream's direct search answers the fr_LA filter for this
+        // song with a different lyric that merely contains "moonshine" in its
+        // text, so the response must be checked against the requested song.
+        var response = await client.GetAsync("/api/Lyrics/lyric?artist=Fayo&title=Moonshine");
+        var content = await response.Content.ReadAsStringAsync();
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK, because: content);
+        var result = await response.Content.ReadFromJsonAsync<LyricResult>();
+        result.Should().NotBeNull();
+        result!.Artist.Should().Be("Fayo");
+        result.Title.Should().Be("Moonshine");
+        result.Lyric.Should().NotBeNullOrWhiteSpace();
+    }
+
+    [Test]
     public async Task ShouldReturn404WhenSongNotFound()
     {
         var response = await client.GetAsync("/api/Lyrics/lyric?artist=NonExistentArtist9999&title=NonExistentTitle9999");

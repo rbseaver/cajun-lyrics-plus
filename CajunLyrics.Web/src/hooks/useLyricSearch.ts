@@ -59,9 +59,12 @@ export function useLyricSearch(): UseLyricSearchReturn {
       }
 
       if (results.length === 1) {
+        // Fetch by the song the list actually resolved, not by the typed text —
+        // the query may be a near-miss, and the backend matches strictly so it
+        // never serves a different song.
         const lyric = await fetchLyric({
-          artist: request.artist ?? results[0].artist,
-          title: request.title ?? results[0].title,
+          artist: results[0].artist ?? request.artist,
+          title: results[0].title ?? request.title,
           languages: request.languages,
         });
         setState({ status: 'success', result: lyric, results: [], errorMessage: null });

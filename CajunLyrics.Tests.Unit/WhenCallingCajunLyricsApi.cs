@@ -308,6 +308,156 @@ namespace CajunLyrics.Tests.Unit
         }
 
         [Test]
+        public async Task ShouldSkipResultsThatAreNotTheRequestedSong()
+        {
+            // Arrange
+            var artist = "Fayo";
+            var title = "Moonshine";
+
+            var lyricSearchRequest = new LyricSearchRequest
+            {
+                Artist = artist,
+                Title = title
+            };
+
+            // Upstream's direct search is fuzzy: the fr_LA filter answers with a
+            // different song whose lyrics merely contain the word "moonshine".
+            var contentMatch = TestLyricUtility.CreateLyricResult("Robert Bertrand", "Drunkard's Two Step", fixture.Create<string>());
+            var expected = TestLyricUtility.CreateLyricResult(artist, title, fixture.Create<string>());
+            expected.Language = LyricLanguage.AcadianFrench;
+            var notFound = TestLyricUtility.CreateLyricResult(artist, title, "Not found");
+
+            MockHttpMessageHandler.Expect(
+                HttpMethod.Get, $"{MockHttpClient.BaseAddress}LyricDirectSearch.php?artist={artist}&title={title}&lf=fr_LA")
+                .Respond(XmlResponseHeaders, new StringContent(TestLyricUtility.BuildLyricResultXmlString(contentMatch)));
+            MockHttpMessageHandler.Expect(
+                HttpMethod.Get, $"{MockHttpClient.BaseAddress}LyricDirectSearch.php?artist={artist}&title={title}&lf=fr_AC")
+                .Respond(XmlResponseHeaders, new StringContent(TestLyricUtility.BuildLyricResultXmlString(expected)));
+            MockHttpMessageHandler.Expect(
+                HttpMethod.Get, $"{MockHttpClient.BaseAddress}LyricDirectSearch.php?artist={artist}&title={title}&lf=fr_QC")
+                .Respond(XmlResponseHeaders, new StringContent(TestLyricUtility.BuildLyricResultXmlString(notFound)));
+
+            // Act
+            var result = await testLyricsService.GetSongLyricsAsync(lyricSearchRequest);
+
+            // Assert
+            result.Should().BeEquivalentTo(expected);
+            result.Language.Should().Be(LyricLanguage.AcadianFrench);
+            MockHttpMessageHandler.VerifyNoOutstandingExpectation();
+        }
+
+        [Test]
+        public async Task ShouldReturnNoLyricWhenNoLanguageAnswersTheRequestedSong()
+        {
+            // Arrange
+            var artist = "Fayo";
+            var title = "Moonshine";
+
+            var lyricSearchRequest = new LyricSearchRequest
+            {
+                Artist = artist,
+                Title = title
+            };
+
+            // Every filter answers with some other song that does have lyrics.
+            var first = TestLyricUtility.CreateLyricResult("Robert Bertrand", "Drunkard's Two Step", fixture.Create<string>());
+            var second = TestLyricUtility.CreateLyricResult("Suroît", "La Lianne", fixture.Create<string>());
+            var third = TestLyricUtility.CreateLyricResult("Zachary Richard", "High Time", fixture.Create<string>());
+
+            MockHttpMessageHandler.Expect(
+                HttpMethod.Get, $"{MockHttpClient.BaseAddress}LyricDirectSearch.php?artist={artist}&title={title}&lf=fr_LA")
+                .Respond(XmlResponseHeaders, new StringContent(TestLyricUtility.BuildLyricResultXmlString(first)));
+            MockHttpMessageHandler.Expect(
+                HttpMethod.Get, $"{MockHttpClient.BaseAddress}LyricDirectSearch.php?artist={artist}&title={title}&lf=fr_AC")
+                .Respond(XmlResponseHeaders, new StringContent(TestLyricUtility.BuildLyricResultXmlString(second)));
+            MockHttpMessageHandler.Expect(
+                HttpMethod.Get, $"{MockHttpClient.BaseAddress}LyricDirectSearch.php?artist={artist}&title={title}&lf=fr_QC")
+                .Respond(XmlResponseHeaders, new StringContent(TestLyricUtility.BuildLyricResultXmlString(third)));
+
+            // Act
+            var result = await testLyricsService.GetSongLyricsAsync(lyricSearchRequest);
+
+            // Assert
+            result.HasLyric.Should().BeFalse("the endpoint must answer 404 rather than serve another song");
+            MockHttpMessageHandler.VerifyNoOutstandingExpectation();
+        }
+
+        [Test]
+        public async Task ShouldMatchTheRequestedSongDespiteCasingAndApostropheDifferences()
+        {
+            // Arrange
+            var artist = "ROBERT BERTRAND";
+            var title = "drunkard's two step";
+
+            var lyricSearchRequest = new LyricSearchRequest
+            {
+                Artist = artist,
+                Title = title
+            };
+
+            // Upstream stores the title with a typographic apostrophe and title casing.
+            var upstreamResult = TestLyricUtility.CreateLyricResult("Robert Bertrand", "Drunkard’s Two Step", fixture.Create<string>());
+            upstreamResult.Language = LyricLanguage.LouisianaFrench;
+            var notFound = TestLyricUtility.CreateLyricResult(artist, title, "Not found");
+
+            MockHttpMessageHandler.Expect(
+                HttpMethod.Get, $"{MockHttpClient.BaseAddress}LyricDirectSearch.php?artist={artist}&title={title}&lf=fr_LA")
+                .Respond(XmlResponseHeaders, new StringContent(TestLyricUtility.BuildLyricResultXmlString(upstreamResult)));
+            MockHttpMessageHandler.Expect(
+                HttpMethod.Get, $"{MockHttpClient.BaseAddress}LyricDirectSearch.php?artist={artist}&title={title}&lf=fr_AC")
+                .Respond(XmlResponseHeaders, new StringContent(TestLyricUtility.BuildLyricResultXmlString(notFound)));
+            MockHttpMessageHandler.Expect(
+                HttpMethod.Get, $"{MockHttpClient.BaseAddress}LyricDirectSearch.php?artist={artist}&title={title}&lf=fr_QC")
+                .Respond(XmlResponseHeaders, new StringContent(TestLyricUtility.BuildLyricResultXmlString(notFound)));
+
+            // Act
+            var result = await testLyricsService.GetSongLyricsAsync(lyricSearchRequest);
+
+            // Assert
+            result.Should().BeEquivalentTo(upstreamResult);
+            result.Language.Should().Be(LyricLanguage.LouisianaFrench);
+            MockHttpMessageHandler.VerifyNoOutstandingExpectation();
+        }
+
+        [Test]
+        public async Task ShouldMatchWhenUpstreamAnnotatesTheTitle()
+        {
+            // Arrange
+            var artist = "Zachary Richard";
+            var title = "Travailler C'est Trop Dur";
+
+            var lyricSearchRequest = new LyricSearchRequest
+            {
+                Artist = artist,
+                Title = title
+            };
+
+            // Upstream stores the title with a bracketed annotation the query
+            // does not carry.
+            var upstreamResult = TestLyricUtility.CreateLyricResult(artist, "Travailler c’est trop dur [Cap Enragé]", fixture.Create<string>());
+            upstreamResult.Language = LyricLanguage.LouisianaFrench;
+            var notFound = TestLyricUtility.CreateLyricResult(artist, title, "Not found");
+
+            MockHttpMessageHandler.Expect(
+                HttpMethod.Get, $"{MockHttpClient.BaseAddress}LyricDirectSearch.php?artist={artist}&title={title}&lf=fr_LA")
+                .Respond(XmlResponseHeaders, new StringContent(TestLyricUtility.BuildLyricResultXmlString(upstreamResult)));
+            MockHttpMessageHandler.Expect(
+                HttpMethod.Get, $"{MockHttpClient.BaseAddress}LyricDirectSearch.php?artist={artist}&title={title}&lf=fr_AC")
+                .Respond(XmlResponseHeaders, new StringContent(TestLyricUtility.BuildLyricResultXmlString(notFound)));
+            MockHttpMessageHandler.Expect(
+                HttpMethod.Get, $"{MockHttpClient.BaseAddress}LyricDirectSearch.php?artist={artist}&title={title}&lf=fr_QC")
+                .Respond(XmlResponseHeaders, new StringContent(TestLyricUtility.BuildLyricResultXmlString(notFound)));
+
+            // Act
+            var result = await testLyricsService.GetSongLyricsAsync(lyricSearchRequest);
+
+            // Assert
+            result.Should().BeEquivalentTo(upstreamResult);
+            result.Language.Should().Be(LyricLanguage.LouisianaFrench);
+            MockHttpMessageHandler.VerifyNoOutstandingExpectation();
+        }
+
+        [Test]
         public async Task ShouldKeepPartialSearchResultsWhenOneLanguageIsThrottled()
         {
             // Arrange

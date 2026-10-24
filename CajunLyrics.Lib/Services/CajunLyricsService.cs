@@ -23,7 +23,11 @@ namespace CajunLyrics.Lib.Services
 
             foreach (var (language, result) in results)
             {
-                if (result.HasLyric)
+                // The upstream direct search is fuzzy: it can answer with a
+                // completely different song that merely contains the title in
+                // its lyrics. Only a result that actually is the requested song
+                // may answer for it.
+                if (result.HasLyric && result.Matches(request))
                 {
                     // The upstream payload carries no language, but the filter that
                     // matched it does — surface that so the UI can show it.
@@ -32,7 +36,13 @@ namespace CajunLyrics.Lib.Services
                 }
             }
 
-            return results[0].Result;
+            // No filter answered with the requested song. Return a lyric-less
+            // result so the endpoint responds 404 instead of serving another song.
+            return new LyricResult
+            {
+                Artist = request.Artist,
+                Title = request.Title
+            };
         }
 
         public async Task<LyricSearchResult> GetSearchResultsAsync(LyricSearchRequest request)
