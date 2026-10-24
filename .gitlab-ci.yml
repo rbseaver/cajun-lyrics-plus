@@ -38,6 +38,21 @@ unit_tests:
       - test-results/
     expire_in: 7 days
 
+# Hermetic endpoint tests against the local WireMock stub (UpstreamFixtures/):
+# no network, no rate limit. The live-upstream canary is excluded here — it is
+# the CD/deploy-time tier (Category=Live).
+integration_tests:
+  stage: test
+  image: mcr.microsoft.com/dotnet/sdk:10.0
+  script:
+    - dotnet restore CajunLyrics.slnx
+    - dotnet test CajunLyrics.Tests.Integration/CajunLyrics.Tests.Integration.csproj --filter "TestCategory!=Live" --logger "trx;LogFileName=integration-tests.trx" --results-directory test-results
+  artifacts:
+    when: always
+    paths:
+      - test-results/
+    expire_in: 7 days
+
 # Builds the image so Dockerfile breakage shows up as a red pipeline.
 # Build only — no push until a registry is chosen.
 image_build:
@@ -57,6 +72,7 @@ release_gate:
   needs:
     - frontend_tests
     - unit_tests
+    - integration_tests
     - image_build
   rules:
     - if: '$CI_COMMIT_TAG'

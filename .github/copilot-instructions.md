@@ -14,7 +14,7 @@
 ## Release and CI expectations
 - Use conventional commit prefixes when possible: `feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, `test:`.
 - Keep CI and release configuration simple and local-first unless the user asks for a more elaborate pipeline.
-- Preserve the current GitLab CI approach: run frontend and backend unit tests, keep the integration suite out of the main gate unless asked otherwise.
+- Preserve the current GitLab CI approach: frontend unit tests, backend unit tests, and the hermetic integration suite (local WireMock stub); keep only the live-upstream canary (`Category=Live`) out of the gate.
 
 ## Application-specific guidance
 - API responses and search behavior should remain stable for existing clients.

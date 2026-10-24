@@ -53,10 +53,11 @@ The GitLab pipeline runs on both pushes to `main` and on version tags.
 - it collects frontend coverage with V8
 - it restores the .NET solution and runs the existing NUnit unit test suite
 - it collects backend coverage with `XPlat Code Coverage`
+- it runs the hermetic integration suite against a local WireMock stub (no network needed)
 - it builds the Docker image (build only, no push) so Dockerfile breakage shows up early
 - it blocks release tags if any gate fails
 
-The integration test suite is intentionally not part of the CI gate right now because it is more network-dependent and can be flaky.
+The hermetic integration suite runs in the gate (job `integration_tests`). Only the live-upstream canary (`Category("Live")`) is excluded — it hits the real API on purpose and is reserved for CD/deploy-time checks. If it fails, upstream likely changed and the recorded corpus in `CajunLyrics.Tests.Integration/UpstreamFixtures/` needs refreshing.
 
 ### Commit conventions
 

@@ -1,12 +1,7 @@
 ﻿using CajunLyrics.Lib.Models;
 using CajunLyrics.Lib.Services;
 using FluentAssertions;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
-using System.Runtime.CompilerServices;
-using CajunLyrics.Lib.Configuration;
-using CajunLyrics.Lib.Http;
 
 namespace CajunLyrics.Tests.Integration
 {
@@ -14,31 +9,23 @@ namespace CajunLyrics.Tests.Integration
     [Category("Lib")]
     public class WhenCallingCajunLyricsService
     {
-        private ILyricsService? cajunLyricsService;
+        private IServiceScope scope = null!;
+        private ILyricsService cajunLyricsService = null!;
 
         [SetUp]
-        public async Task Setup()
+        public void Setup()
         {
-            // The upstream API rate-limits at roughly 6 requests per 10 seconds per IP,
-            // and the default language search fans out to 3 requests — back off enough
-            // between tests to stay inside the window.
-            await Task.Delay(4000);
+            // Same wiring the API uses: Program.cs binds HttpClient:BaseAddress
+            // to the local stub, so there is no upstream, no rate limit and no
+            // pacing between tests.
+            scope = LocalUpstream.Factory.Services.CreateScope();
+            cajunLyricsService = scope.ServiceProvider.GetRequiredService<ILyricsService>();
+        }
 
-            var configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .Build();
-            var services = new ServiceCollection();
-            services.Configure<HttpClientOptions>(configuration.GetSection("HttpClient"));
-            services.AddHttpClient(
-                nameof(CajunLyricsClient),
-                (sp, client) =>
-                {
-                    client.BaseAddress = new Uri("https://api.cajunlyrics.com/");
-                });
-            services.AddScoped<ILyricsClient, CajunLyricsClient>();
-            services.AddScoped<ILyricsService, CajunLyricsService>();
-            var provider = services.BuildServiceProvider();
-            cajunLyricsService = provider.GetRequiredService<ILyricsService>();
+        [TearDown]
+        public void TearDown()
+        {
+            scope.Dispose();
         }
 
         [Test]

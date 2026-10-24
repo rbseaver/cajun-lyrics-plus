@@ -1,9 +1,12 @@
 using System.Net;
 using System.Net.Http.Json;
+using CajunLyrics.Lib.Configuration;
 using CajunLyrics.Lib.Models;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 [assembly: Parallelizable(ParallelScope.None)]
 
@@ -14,30 +17,28 @@ namespace CajunLyrics.Tests.Integration;
 [NonParallelizable]
 public class WhenCallingLyricsEndpoint
 {
-    private WebApplicationFactory<Program> factory = null!;
     private HttpClient client = null!;
 
     [OneTimeSetUp]
     public void OneTimeSetUp()
     {
-        factory = new WebApplicationFactory<Program>();
-        client = factory.CreateClient();
-    }
-
-    [SetUp]
-    public async Task SetUp()
-    {
-        // The upstream API rate-limits at roughly 6 requests per 10 seconds per IP,
-        // and the default language search fans out to 3 requests — back off enough
-        // between tests to stay inside the window.
-        await Task.Delay(4000);
+        client = LocalUpstream.Factory.CreateClient();
     }
 
     [OneTimeTearDown]
     public void OneTimeTearDown()
     {
         client.Dispose();
-        factory.Dispose();
+    }
+
+    [Test]
+    public void ShouldPointTheApiAtTheLocalUpstreamStub()
+    {
+        var options = LocalUpstream.Factory.Services
+            .GetRequiredService<IOptions<HttpClientOptions>>().Value;
+
+        options.BaseAddress.Should().Be(new Uri(LocalUpstream.BaseUrl),
+            "the suite must never talk to the real upstream — that is the whole point of the stub");
     }
 
     [Test]
@@ -56,7 +57,7 @@ public class WhenCallingLyricsEndpoint
         Environment.SetEnvironmentVariable("ASPNETCORE_HTTPS_PORT", "443");
         try
         {
-            using var productionFactory = factory.WithWebHostBuilder(builder =>
+            using var productionFactory = LocalUpstream.Factory.WithWebHostBuilder(builder =>
                 builder.UseEnvironment("Production"));
             using var productionClient = productionFactory.CreateClient(
                 new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
@@ -118,6 +119,31 @@ public class WhenCallingLyricsEndpoint
     }
 
     [Test]
+    public async Task ShouldFallBackToTheNextLanguageWhenUpstreamThrottles()
+    {
+        // The fr_LA filter answers 429 (recorded rate-limit behavior); fr_AC
+        // carries the song, so the fan-out must continue past the failure.
+        var response = await client.GetAsync("/api/Lyrics/lyric?artist=ThrottleTest&title=ServeMeNext");
+        var content = await response.Content.ReadAsStringAsync();
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK, because: content);
+        var result = await response.Content.ReadFromJsonAsync<LyricResult>();
+        result.Should().NotBeNull();
+        result!.Artist.Should().Be("ThrottleTest");
+        result.Language.Should().NotBeNull();
+        result.Language!.Code.Should().Be("fr_AC");
+    }
+
+    [Test]
+    public async Task ShouldSurfaceAnErrorWhenEveryLanguageFails()
+    {
+        var response = await client.GetAsync("/api/Lyrics/lyric?artist=BrokenUpstream&title=NothingWorks");
+
+        response.StatusCode.Should().Be(HttpStatusCode.InternalServerError,
+            "an unreachable upstream is an error, not a wrong song and not a 404");
+    }
+
+    [Test]
     public async Task ShouldReturn404WhenSongNotFound()
     {
         var response = await client.GetAsync("/api/Lyrics/lyric?artist=NonExistentArtist9999&title=NonExistentTitle9999");
@@ -166,7 +192,7 @@ public class WhenCallingLyricsEndpoint
     [Test]
     public async Task ShouldRedirectRootToScalarDocumentation()
     {
-        var noRedirectClient = factory.CreateClient(new WebApplicationFactoryClientOptions
+        var noRedirectClient = LocalUpstream.Factory.CreateClient(new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false
         });

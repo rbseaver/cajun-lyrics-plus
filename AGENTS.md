@@ -43,7 +43,7 @@ In Development, `/` redirects to the Scalar API reference, Swagger UI reads `/op
 - **`CajunLyrics.Api`** — controllers, `Program.cs` DI wiring, OpenAPI/Scalar, static file serving.
 - **`CajunLyrics.Lib`** — all domain logic: `Services` (fetch + XML deserialization), `Http`, `Configuration`, `Helpers`, `Models`.
 - **`CajunLyrics.Tests.Unit`** — NUnit tests covering Api and Lib.
-- **`CajunLyrics.Tests.Integration`** — endpoint tests via `WebApplicationFactory`, plus a fixture that hits the real upstream API.
+- **`CajunLyrics.Tests.Integration`** — endpoint and service tests via `WebApplicationFactory` against a local WireMock stub that serves the recorded corpus in `UpstreamFixtures/`, plus a thin `Category("Live")` canary fixture that hits the real upstream.
 - **`CajunLyrics.Web`** — the SPA: `src/components`, `src/hooks`, `src/api`, co-located tests.
 
 Solution file is `CajunLyrics.slnx` (XML solution format, not a classic `.sln`). Package sources live in `NuGet.Config` (nuget.org only) — the old lowercase `nuget.config` is gone, don't recreate it.
@@ -87,7 +87,7 @@ Dev server detail: Vite proxies `/api/*` → `https://localhost:7156` with `secu
 - `image_build` — `docker:29` + `docker:29-dind`, builds the container image so Dockerfile breakage shows up red. Build only, no push until a registry is picked.
 - `release_gate` — runs on tags only; blocks a release if any gate failed.
 
-**The integration suite is deliberately not in the CI gate** (per README: network-dependent and flaky). Treat it as a local check.
+**The hermetic integration suite IS in the CI gate** (job `integration_tests`, run with `--filter "TestCategory!=Live"`). Only the live-upstream canary (`Category("Live")`) stays out — that tier is for CD/deploy-time checks.
 
 Releases use `release-it` with the Conventional Commits plugin: it updates `CHANGELOG.md`, bumps `package.json` (root, currently `1.1.0`), and creates the `v*` tag.
 
@@ -103,6 +103,6 @@ Releases use `release-it` with the Conventional Commits plugin: it updates `CHAN
 
 - **Drive this repo from WSL, not Windows.** Git rejects the repo through the Windows UNC path with a "dubious ownership" error, so both `git` and `dotnet` belong in the WSL shell. Two .NET 10 SDKs exist (WSL 10.0.112, Windows 10.0.400) — build where the checkout lives.
 - **Node comes from nvm in WSL.** A bare `node` may be missing while `npm` resolves to the Windows install at `/mnt/c/Program Files/nodejs`. Load nvm and use 22: `. "$NVM_DIR/nvm.sh" && nvm use 22` (WSL has 20/22/24 installed; `engines` requires >= 22).
-- **One live-network fixture asserts exact upstream lyrics**, punctuation and all: `CajunLyrics.Tests.Integration/WhenCallingCajunLyricsService.cs`. A failure there means "check whether upstream changed" before assuming a regression in our code.
+- **The recorded corpus pins upstream payloads verbatim** (exact lyrics, punctuation and all) in `CajunLyrics.Tests.Integration/UpstreamFixtures/`, served by the local WireMock stub. If a live canary (`WhenCallingUpstreamLive.cs`) fails, check whether upstream changed and re-record before assuming a regression in our code.
 - **Both controller actions use a bare `catch`**, so every failure surfaces as a generic 500 with no logged exception. Fine for now, but it hides root causes when something does break.
 - `.editorconfig` silences CS8604 and CS8602, so nullable-reference warnings will not all surface in the build output even though `Nullable` is enabled everywhere.
