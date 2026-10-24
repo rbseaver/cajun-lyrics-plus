@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.5.0](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/compare/v1.4.1...v1.5.0) (2026-10-24)
+
+### Features
+
+* change app title and tagline ([5df458c](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/commit/5df458c9716aabeab5b45264402f6a06ba0db3e9))
+* **web:** show a musical favicon instead of vite default logo ([ae025ba](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/commit/ae025bacc2f3b86ec4ab05735bbe3c4f81e7552e))
+
+### Bug Fixes
+
+* **ci:** match dind mtu to runner network and cap image build at 5m ([d61f6d8](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/commit/d61f6d84f737f3d6806adcc016b27a8fd0f713c3))
+
 ## [1.4.1](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/compare/v1.4.0...v1.4.1) (2026-10-24)
 
 ### Bug Fixes
