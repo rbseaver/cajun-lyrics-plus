@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.4.1](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/compare/v1.4.0...v1.4.1) (2026-10-24)
+
+### Bug Fixes
+
+* **api,web:** never serve a different song than requested ([a2b3ce5](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/commit/a2b3ce5d9486736a98839d794e772eb6149f2ea2))
+
 ## [1.4.0](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/compare/v1.3.0...v1.4.0) (2026-10-23)
 
 ### Features
