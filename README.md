@@ -17,6 +17,21 @@ Then open:
 
 This runs the ASP.NET API and the React frontend together in one deployment unit, which keeps the local dev experience simple while still using the same backend/frontend structure as the app itself.
 
+## Local development
+
+To run the two processes side by side without Docker — API plus the Vite dev server with hot reload, `/api` proxied to the API:
+
+```bash
+npm install
+npm run dev
+```
+
+Then open:
+
+- http://localhost:5173
+
+Requirements: Node 22+ and the .NET 10 SDK. There is no shell script involved — `npm run dev` uses `concurrently`, so it behaves the same on Linux, macOS, and Windows.
+
 ## Release and CI process
 
 This repository uses a simple local release flow plus GitLab CI for automated validation.

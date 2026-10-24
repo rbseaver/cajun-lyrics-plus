@@ -68,7 +68,10 @@ npm run test:run                               # single pass; `npm test` is watc
 npm run lint                                   # oxlint
 npm run build                                  # tsc -b && vite build
 
-# Whole app
+# Whole app — dev loop: API + Vite dev server together (repo root, via concurrently)
+npm run dev
+
+# Whole app — containerized
 docker compose up --build                      # then http://localhost:8080
 
 # Release (root, requires a clean working tree — creates commit + tag but does not push)
