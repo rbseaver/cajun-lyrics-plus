@@ -22,7 +22,7 @@ describe('App', () => {
     render(<App />);
 
     expect(screen.getByLabelText(/welcome message/i)).toBeInTheDocument();
-    expect(screen.getByText(/find your cajun lyrics/i)).toBeInTheDocument();
+    expect(screen.getByText(/find your lyrics/i)).toBeInTheDocument();
   });
 
   it('renders lyric results when the search succeeds', () => {

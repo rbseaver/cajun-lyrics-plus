@@ -18,20 +18,19 @@ export function EmptyState() {
           <circle cx="18" cy="16" r="3" />
         </svg>
       </div>
-      <h2 className="empty-state__heading">Find Your Cajun Lyrics</h2>
+      <h2 className="empty-state__heading">Find Your Lyrics</h2>
       <p className="empty-state__body">
-        Enter an artist name and/or song title above to search thousands of Cajun, Creole,
-        and Louisiana French songs.
+        Enter an artist name and/or song title above to search thousands of North American French songs.
       </p>
       <ul className="empty-state__suggestions" aria-label="Search suggestions">
         <li>
           <span className="suggestion-chip">Zachary Richard</span>
         </li>
         <li>
-          <span className="suggestion-chip">Beausoleil</span>
+          <span className="suggestion-chip">Lisa LeBlanc</span>
         </li>
         <li>
-          <span className="suggestion-chip">Steve Riley</span>
+          <span className="suggestion-chip">Stephen Faulkner</span>
         </li>
       </ul>
     </div>
