@@ -604,6 +604,11 @@ body::before {
 }
 .app-footer a:hover { color: var(--color-accent-bright); }
 
+.app-footer__version {
+  display: block;
+  margin-top: 0.35rem;
+}
+
 /* ============================================================
    Animations
    ============================================================ */

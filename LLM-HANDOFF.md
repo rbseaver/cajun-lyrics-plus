@@ -4,6 +4,12 @@ This is a running project-context log for LLM sessions, not a replacement for th
 
 When finishing meaningful repository work, add a concise, factual entry at the top. Include relevant files, decisions, and validation results; preserve older entries. Do not include secrets or sensitive data.
 
+## 2026-10-25 — Show release version in the footer
+
+- Added a footer version label sourced from Vite's `VITE_APP_VERSION`, with `development` for non-image local frontend builds. The Dockerfile composes the root package version and full CI commit SHA as SemVer build metadata (`1.5.4+sha.<full-sha>`).
+- Both GitHub Actions and GitLab image builds now pass their commit SHA into Docker. The root package version is read at image build time, so release-it version bumps flow into the deployed UI without another release-specific edit.
+- Added footer regression coverage. Validation passed: all 25 frontend tests, lint, production frontend build, Docker image build, and `git diff --check`.
+
 ## 2026-10-25 — Avoid duplicate Actions run numbers
 
 - Updated `.github/workflows/ci.yml` so tag-triggered custom titles contain the tag and full commit SHA, while other runs use `CI`. GitHub appends the unique workflow run number to the displayed title, so it is intentionally omitted from `run-name` to avoid duplication.

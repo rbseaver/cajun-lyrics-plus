@@ -6,6 +6,7 @@ import { ErrorMessage } from './components/ErrorMessage';
 import { useLyricSearch } from './hooks/useLyricSearch';
 
 function App() {
+  const appVersion = import.meta.env.VITE_APP_VERSION ?? 'development';
   const { status, result, results, errorMessage, searchResults, selectResult } = useLyricSearch();
 
   return (
@@ -83,6 +84,7 @@ function App() {
           <a href="https://www.cajunlyrics.com" target="_blank" rel="noopener noreferrer">
             CajunLyrics.com
           </a>
+          <span className="app-footer__version">Version {appVersion}</span>
         </p>
       </footer>
     </div>

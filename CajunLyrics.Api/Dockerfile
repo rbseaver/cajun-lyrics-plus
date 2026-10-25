@@ -1,9 +1,12 @@
 FROM node:22-alpine AS frontend-build
 WORKDIR /src/CajunLyrics.Web
+ARG APP_COMMIT=unknown
+COPY package.json /src/package.json
 COPY CajunLyrics.Web/package*.json ./
 RUN npm ci
 COPY CajunLyrics.Web .
-RUN npm run build
+RUN APP_VERSION="$(node -p "require('/src/package.json').version")" && \
+    VITE_APP_VERSION="${APP_VERSION}+sha.${APP_COMMIT}" npm run build
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release

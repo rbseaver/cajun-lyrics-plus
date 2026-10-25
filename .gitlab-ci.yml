@@ -72,7 +72,7 @@ image_build:
     DOCKER_TLS_CERTDIR: "/certs"
   cache: {}
   script:
-    - docker build --file CajunLyrics.Api/Dockerfile --tag cajunlyrics-plus:ci .
+    - docker build --build-arg APP_COMMIT="$CI_COMMIT_SHA" --file CajunLyrics.Api/Dockerfile --tag cajunlyrics-plus:ci .
 
 release_gate:
   stage: release-check

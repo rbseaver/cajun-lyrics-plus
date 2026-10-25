@@ -25,6 +25,26 @@ describe('App', () => {
     expect(screen.getByText(/find your lyrics/i)).toBeInTheDocument();
   });
 
+  it('renders the release version in the footer', () => {
+    const version = '1.5.4+sha.0123456789abcdef0123456789abcdef01234567';
+    vi.stubEnv('VITE_APP_VERSION', version);
+    vi.mocked(useLyricSearch).mockReturnValue({
+      status: 'idle',
+      result: null,
+      results: [],
+      errorMessage: null,
+      search: vi.fn(),
+      searchResults: vi.fn(),
+      selectResult: vi.fn(),
+      reset: vi.fn(),
+    });
+
+    render(<App />);
+
+    expect(screen.getByText(`Version ${version}`)).toBeInTheDocument();
+    vi.unstubAllEnvs();
+  });
+
   it('renders lyric results when the search succeeds', () => {
     vi.mocked(useLyricSearch).mockReturnValue({
       status: 'success',
