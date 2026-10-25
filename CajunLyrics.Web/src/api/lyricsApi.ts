@@ -15,6 +15,7 @@ export class LyricsApiError extends Error {
 function buildSearchParams(request: LyricSearchRequest): URLSearchParams {
   const params = new URLSearchParams();
 
+  if (request.id !== undefined) params.set('id', String(request.id));
   if (request.artist) params.set('artist', request.artist);
   if (request.title) params.set('title', request.title);
   for (const language of request.languages ?? []) {

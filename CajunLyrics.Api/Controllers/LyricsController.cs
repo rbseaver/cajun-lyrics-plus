@@ -10,8 +10,13 @@ namespace CajunLyrics.Api.Controllers
     {
         [HttpGet]
         [Route("lyric")]
-        public async Task<IActionResult> Get([FromQuery] string artist, [FromQuery] string title, [FromQuery] List<LyricLanguage>? language)
+        public async Task<IActionResult> Get([FromQuery] string? artist, [FromQuery] string? title, [FromQuery] List<LyricLanguage>? language, [FromQuery] int? id = null)
         {
+            if (id is null && (artist is null || title is null))
+            {
+                return BadRequest("Provide a lyric ID or both an artist and title.");
+            }
+
             var request = new LyricSearchRequest
             {
                 Artist = artist,
@@ -20,10 +25,14 @@ namespace CajunLyrics.Api.Controllers
             };
             try
             {
-                var result = await cajunLyricsService.GetSongLyricsAsync(request);
+                var result = id.HasValue
+                    ? await cajunLyricsService.GetSongLyricsByIdAsync(id.Value, language)
+                    : await cajunLyricsService.GetSongLyricsAsync(request);
                 if (!result.HasLyric)
                 {
-                    return NotFound($"Lyrics not found for '{artist}' and '{title}'");
+                    return id.HasValue
+                        ? NotFound($"Lyrics not found for ID '{id}'")
+                        : NotFound($"Lyrics not found for '{artist}' and '{title}'");
                 }
                 return Ok(result);
             }

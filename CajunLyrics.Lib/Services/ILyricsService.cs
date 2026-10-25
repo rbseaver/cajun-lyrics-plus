@@ -6,5 +6,6 @@ namespace CajunLyrics.Lib.Services
     {
         Task<LyricSearchResult> GetSearchResultsAsync(LyricSearchRequest request);
         Task<LyricResult> GetSongLyricsAsync(LyricSearchRequest request);
+        Task<LyricResult> GetSongLyricsByIdAsync(int id, IReadOnlyList<LyricLanguage>? languages = null);
     }
 }

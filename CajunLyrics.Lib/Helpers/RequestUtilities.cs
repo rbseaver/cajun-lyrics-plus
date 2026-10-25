@@ -4,6 +4,11 @@ namespace CajunLyrics.Lib.Helpers
 {
     static class RequestUtilities
     {
+        public static string BuildRequestUri(string resource, int id)
+        {
+            return $"{resource}?id={id}";
+        }
+
         public static string BuildRequestUri(string resource, LyricSearchRequest request, LyricLanguage? language = null)
         {
             var queryParams = BuildQueryString(request, language);

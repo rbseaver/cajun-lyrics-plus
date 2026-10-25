@@ -14,6 +14,7 @@ export const LYRIC_LANGUAGES: LyricLanguage[] = [
 export const ANY_LANGUAGE = 'all';
 
 export interface LyricSearchRequest {
+  id?: number;
   artist?: string;
   title?: string;
   /**

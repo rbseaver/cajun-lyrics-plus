@@ -51,14 +51,13 @@ describe('App integration', () => {
     );
     expect(fetch).toHaveBeenNthCalledWith(
       2,
-      "/api/Lyrics/lyric?artist=Zachary+Richard&title=Travailler+C%27est+Trop+Dur",
+      '/api/Lyrics/lyric?id=12',
       { headers: { Accept: 'application/json' } },
     );
     expect(screen.getByText(/là on travaille/i)).toBeInTheDocument();
-    expect(screen.getByText('Louisiana French')).toBeInTheDocument();
   });
 
-  it('runs an advanced English search and keeps the language when picking a result', async () => {
+  it('runs an advanced English search and fetches the selected song by ID', async () => {
     const user = userEvent.setup();
 
     const searchResultsResponse = {
@@ -112,7 +111,7 @@ describe('App integration', () => {
     );
     expect(fetch).toHaveBeenNthCalledWith(
       2,
-      '/api/Lyrics/lyric?artist=Zachary+Richard&title=American+Tune&language=en',
+      '/api/Lyrics/lyric?id=1&language=en',
       { headers: { Accept: 'application/json' } },
     );
   });

@@ -45,6 +45,24 @@ namespace CajunLyrics.Lib.Services
             };
         }
 
+        public async Task<LyricResult> GetSongLyricsByIdAsync(int id, IReadOnlyList<LyricLanguage>? languages = null)
+        {
+            var result = await FetchResultAsync<LyricResult>(
+                RequestUtilities.BuildRequestUri("LyricDirectSearch.php", id));
+
+            if (result.Id != id)
+            {
+                return new LyricResult { Id = id };
+            }
+
+            if (languages is { Count: 1 } && languages[0] != LyricLanguage.Any)
+            {
+                result.Language = languages[0];
+            }
+
+            return result;
+        }
+
         public async Task<LyricSearchResult> GetSearchResultsAsync(LyricSearchRequest request)
         {
             var languages = ResolveLanguages(request);
@@ -120,7 +138,13 @@ namespace CajunLyrics.Lib.Services
 
         private async Task<T> FetchResultAsync<T>(string resource, LyricSearchRequest request, LyricLanguage? language)
         {
-            var xml = await FetchXmlResponse(resource, request, language);
+            var requestUri = RequestUtilities.BuildRequestUri(resource, request, language);
+            return await FetchResultAsync<T>(requestUri);
+        }
+
+        private async Task<T> FetchResultAsync<T>(string requestUri)
+        {
+            var xml = await FetchXmlResponse(requestUri);
 
             using var reader = new StringReader(xml);
 
@@ -128,10 +152,8 @@ namespace CajunLyrics.Lib.Services
                 throw new InvalidOperationException($"Failed to deserialize {typeof(T).Name} from XML");
         }
 
-        private async Task<string> FetchXmlResponse(string resource, LyricSearchRequest request, LyricLanguage? language)
+        private async Task<string> FetchXmlResponse(string requestUri)
         {
-            string requestUri = RequestUtilities.BuildRequestUri(resource, request, language);
-
             var response = await lyricsClient.GetLyricsAsync(new Uri(requestUri, UriKind.Relative));
 
             response.EnsureSuccessStatusCode();

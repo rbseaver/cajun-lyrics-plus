@@ -59,12 +59,9 @@ export function useLyricSearch(): UseLyricSearchReturn {
       }
 
       if (results.length === 1) {
-        // Fetch by the song the list actually resolved, not by the typed text —
-        // the query may be a near-miss, and the backend matches strictly so it
-        // never serves a different song.
+        // Fetch by the song ID the list resolved, not by its possibly fuzzy text.
         const lyric = await fetchLyric({
-          artist: results[0].artist ?? request.artist,
-          title: results[0].title ?? request.title,
+          id: results[0].id,
           languages: request.languages,
         });
         setState({ status: 'success', result: lyric, results: [], errorMessage: null });
@@ -84,8 +81,8 @@ export function useLyricSearch(): UseLyricSearchReturn {
   }, []);
 
   const selectResult = useCallback(async (result: LyricResult) => {
-    if (!result.artist || !result.title) {
-      setState({ status: 'error', result: null, results: [], errorMessage: 'That result is missing the artist or title.' });
+    if (!Number.isInteger(result.id) || result.id <= 0) {
+      setState({ status: 'error', result: null, results: [], errorMessage: 'That result is missing a valid ID.' });
       return;
     }
 
@@ -93,8 +90,7 @@ export function useLyricSearch(): UseLyricSearchReturn {
 
     try {
       const lyric = await fetchLyric({
-        artist: result.artist,
-        title: result.title,
+        id: result.id,
         languages: lastSearchRef.current?.languages,
       });
       setState({ status: 'success', result: lyric, results: [], errorMessage: null });

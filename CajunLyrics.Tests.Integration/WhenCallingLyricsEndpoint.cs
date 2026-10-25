@@ -88,6 +88,21 @@ public class WhenCallingLyricsEndpoint
     }
 
     [Test]
+    public async Task ShouldReturnLyricResultById()
+    {
+        var response = await client.GetAsync("/api/Lyrics/lyric?id=1054&language=fr_AC");
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var result = await response.Content.ReadFromJsonAsync<LyricResult>();
+        result.Should().NotBeNull();
+        result!.Id.Should().Be(1054);
+        result.Artist.Should().Be("Johnnie Allan");
+        result.Title.Should().Be("Ça, Ça C'est Dur");
+        result.Lyric.Should().Be("Retrieved by song ID");
+        result.Language!.Code.Should().Be("fr_AC");
+    }
+
+    [Test]
     public async Task ShouldReturnLyricResultWithLanguageFilter()
     {
         var response = await client.GetAsync("/api/Lyrics/lyric?artist=Zachary%20Richard&title=Travailler%20C%27est%20Trop%20Dur&language=fr_LA");

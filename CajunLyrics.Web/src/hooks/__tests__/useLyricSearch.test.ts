@@ -165,13 +165,13 @@ describe('useLyricSearch', () => {
       await result.current.searchResults({ artist: 'Feufollet', languages: ['en'] });
     });
     await act(async () => {
-      await result.current.selectResult({ id: 1, artist: 'Feufollet', title: 'Blues de Dix Ans' });
+      await result.current.selectResult({ id: 1 });
     });
 
     expect(result.current.status).toBe('success');
     expect(fetch).toHaveBeenNthCalledWith(
       2,
-      '/api/Lyrics/lyric?artist=Feufollet&title=Blues+de+Dix+Ans&language=en',
+      '/api/Lyrics/lyric?id=1&language=en',
       { headers: { Accept: 'application/json' } },
     );
   });
@@ -210,7 +210,7 @@ describe('useLyricSearch', () => {
     expect(result.current.status).toBe('success');
     expect(fetch).toHaveBeenNthCalledWith(
       2,
-      '/api/Lyrics/lyric?artist=Fayo&title=Moonshine',
+      '/api/Lyrics/lyric?id=3728',
       { headers: { Accept: 'application/json' } },
     );
   });

@@ -71,6 +71,39 @@ namespace CajunLyrics.Tests.Unit
         }
 
         [Test]
+        public async Task ShouldGetLyricsById()
+        {
+            var expected = TestLyricUtility.CreateLyricResult("Johnnie Allan", "Ça, Ça C'est Dur", fixture.Create<string>());
+            expected.Id = 1054;
+            expected.Language = LyricLanguage.English;
+
+            MockHttpMessageHandler.Expect(
+                HttpMethod.Get, $"{MockHttpClient.BaseAddress}LyricDirectSearch.php?id=1054")
+                .Respond(XmlResponseHeaders, new StringContent(TestLyricUtility.BuildLyricResultXmlString(expected)));
+
+            var result = await testLyricsService.GetSongLyricsByIdAsync(1054, [LyricLanguage.English]);
+
+            result.Should().BeEquivalentTo(expected);
+            MockHttpMessageHandler.VerifyNoOutstandingExpectation();
+        }
+
+        [Test]
+        public async Task ShouldRejectLyricsWithAnUnexpectedId()
+        {
+            var unrelated = TestLyricUtility.CreateLyricResult("Johnnie Allan", "You Win Again", fixture.Create<string>());
+            unrelated.Id = 1065;
+
+            MockHttpMessageHandler.Expect(
+                HttpMethod.Get, $"{MockHttpClient.BaseAddress}LyricDirectSearch.php?id=1054")
+                .Respond(XmlResponseHeaders, new StringContent(TestLyricUtility.BuildLyricResultXmlString(unrelated)));
+
+            var result = await testLyricsService.GetSongLyricsByIdAsync(1054);
+
+            result.HasLyric.Should().BeFalse();
+            MockHttpMessageHandler.VerifyNoOutstandingExpectation();
+        }
+
+        [Test]
         public async Task ShouldGetSearchResults()
         {
             // Arrange

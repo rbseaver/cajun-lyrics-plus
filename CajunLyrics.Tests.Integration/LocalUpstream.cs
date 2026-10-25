@@ -79,6 +79,8 @@ public sealed class LocalUpstream
         ServeLyric("Fayo", "Moonshine", "fr_AC", "direct-moonshine-fr_AC.xml");
         ServeLyric("Fayo", "Moonshine", "fr_QC", "direct-moonshine-fr_QC.xml");
 
+        ServeLyricById("1054", "direct-by-id.xml");
+
         ServeNotFound("NonExistentArtist9999", "NonExistentTitle9999");
     }
 
@@ -143,6 +145,15 @@ public sealed class LocalUpstream
                 .WithParam("artist", artist)
                 .WithParam("title", title))
             .RespondWith(XmlBody("not-found.xml"));
+    }
+
+    private static void ServeLyricById(string id, string fixture)
+    {
+        server
+            .Given(Request.Create()
+                .WithPath("/LyricDirectSearch.php")
+                .WithParam("id", id))
+            .RespondWith(XmlBody(fixture));
     }
 
     private static void ServeSearch(string artist, string? title, string? languageCode, string fixture)
