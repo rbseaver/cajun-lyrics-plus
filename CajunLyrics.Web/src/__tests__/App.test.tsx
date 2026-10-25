@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import App from '../App';
 import { useLyricSearch } from '../hooks/useLyricSearch';
 
@@ -25,7 +26,8 @@ describe('App', () => {
     expect(screen.getByText(/find your lyrics/i)).toBeInTheDocument();
   });
 
-  it('renders the release version in the footer', () => {
+  it('opens the rendered changelog from the footer version', async () => {
+    const user = userEvent.setup();
     const version = '1.5.4+sha.0123456789abcdef0123456789abcdef01234567';
     vi.stubEnv('VITE_APP_VERSION', version);
     vi.mocked(useLyricSearch).mockReturnValue({
@@ -41,10 +43,8 @@ describe('App', () => {
 
     render(<App />);
 
-    expect(screen.getByRole('link', { name: `Version ${version}` })).toHaveAttribute(
-      'href',
-      'https://github.com/rbseaver/cajun-lyrics-plus/blob/main/CHANGELOG.md',
-    );
+    await user.click(screen.getByText(`Version ${version}`));
+    expect(screen.getByRole('heading', { name: /^1\.6\.0/ })).toBeInTheDocument();
     vi.unstubAllEnvs();
   });
 

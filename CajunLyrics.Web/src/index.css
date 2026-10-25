@@ -604,9 +604,40 @@ body::before {
 }
 .app-footer a:hover { color: var(--color-accent-bright); }
 
+.app-footer__changelog {
+  margin: 0 auto;
+  max-width: 48rem;
+}
+
 .app-footer__version {
-  display: block;
+  display: inline-block;
   margin-top: 0.35rem;
+  cursor: pointer;
+}
+
+.app-footer__changelog-content {
+  max-height: 60vh;
+  overflow-y: auto;
+  margin-top: 1rem;
+  padding: 1rem;
+  text-align: left;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  background: var(--color-surface);
+}
+
+.app-footer__changelog-content h1,
+.app-footer__changelog-content h2,
+.app-footer__changelog-content h3 {
+  margin: 1.25rem 0 0.5rem;
+}
+
+.app-footer__changelog-content h1:first-child {
+  margin-top: 0;
+}
+
+.app-footer__changelog-content a {
+  color: var(--color-accent-bright);
 }
 
 /* ============================================================

@@ -2,6 +2,7 @@ FROM node:22-alpine AS frontend-build
 WORKDIR /src/CajunLyrics.Web
 ARG APP_COMMIT=unknown
 COPY package.json /src/package.json
+COPY CHANGELOG.md /src/CHANGELOG.md
 COPY CajunLyrics.Web/package*.json ./
 RUN npm ci
 COPY CajunLyrics.Web .

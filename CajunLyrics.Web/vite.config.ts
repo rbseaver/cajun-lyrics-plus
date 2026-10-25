@@ -1,3 +1,4 @@
+import { resolve } from 'node:path'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vitest/config'
 
@@ -14,6 +15,9 @@ const apiProxy = {
 export default defineConfig({
   plugins: [react()],
   server: {
+    fs: {
+      allow: [resolve(process.cwd(), '..')],
+    },
     proxy: {
       '/api': apiProxy,
     },

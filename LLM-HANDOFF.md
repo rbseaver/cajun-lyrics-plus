@@ -4,6 +4,11 @@ This is a running project-context log for LLM sessions, not a replacement for th
 
 When finishing meaningful repository work, add a concise, factual entry at the top. Include relevant files, decisions, and validation results; preserve older entries. Do not include secrets or sensitive data.
 
+## 2026-10-25 — Render changelog in the frontend
+
+- Replaced the footer's GitHub changelog link with an accessible disclosure that renders the bundled `CHANGELOG.md` via `react-markdown`; raw HTML is not enabled. Added Vite filesystem access to the repository root and copied the changelog into the Docker frontend build stage.
+- Added a regression test for opening the release notes. Validation passed: 25 frontend tests, lint, production build, Docker image build, and `git diff --check`.
+
 ## 2026-10-25 — Link footer version to changelog
 
 - Made the footer's version label link to the repository's `main/CHANGELOG.md` on GitHub, which works from the deployed app.
