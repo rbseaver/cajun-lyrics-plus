@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.6.0](https://github.com/rbseaver/cajun-lyrics-plus/compare/v1.5.4...v1.6.0) (2026-10-25)
+
+### Features
+
+* **web:** show release version in footer ([66abca9](https://github.com/rbseaver/cajun-lyrics-plus/commit/66abca987406714114ca7a3aefc848bdecddd423))
+
+### Bug Fixes
+
+* **ci:** avoid duplicate run numbers in titles ([d49cc31](https://github.com/rbseaver/cajun-lyrics-plus/commit/d49cc31e6953b090ac2107984e6a585ab6233f7e))
+
 ## [1.5.4](https://github.com/rbseaver/cajun-lyrics-plus/compare/v1.5.3...v1.5.4) (2026-10-25)
 
 ### Bug Fixes
