@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: docker build --build-arg APP_COMMIT="$GITHUB_SHA" --file CajunLyrics.Api/Dockerfile --tag cajunlyrics-plus:ci .
+      - run: docker build --build-arg RENDER_GIT_COMMIT="$GITHUB_SHA" --file CajunLyrics.Api/Dockerfile --tag cajunlyrics-plus:ci .
 
   release_gate:
     name: Release gate

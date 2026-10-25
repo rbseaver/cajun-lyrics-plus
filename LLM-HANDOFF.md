@@ -4,6 +4,11 @@ This is a running project-context log for LLM sessions, not a replacement for th
 
 When finishing meaningful repository work, add a concise, factual entry at the top. Include relevant files, decisions, and validation results; preserve older entries. Do not include secrets or sensitive data.
 
+## 2026-10-25 — Use Render's deployed commit SHA
+
+- The Dockerfile now falls back to Render's build-provided `RENDER_GIT_COMMIT` when `APP_COMMIT` is unset, preserving the existing GitLab CI argument. GitHub Actions now builds with the Render argument name to cover that path in CI.
+- Validation passed: Docker image built with a simulated `RENDER_GIT_COMMIT`, and the full SHA was found in the bundled frontend; `git diff --check` passed.
+
 ## 2026-10-25 — Render changelog in the frontend
 
 - Replaced the footer's GitHub changelog link with an accessible disclosure that renders the bundled `CHANGELOG.md` via `react-markdown`; raw HTML is not enabled. Added Vite filesystem access to the repository root and copied the changelog into the Docker frontend build stage.

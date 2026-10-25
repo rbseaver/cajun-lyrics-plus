@@ -1,12 +1,14 @@
 FROM node:22-alpine AS frontend-build
 WORKDIR /src/CajunLyrics.Web
-ARG APP_COMMIT=unknown
+ARG APP_COMMIT
+ARG RENDER_GIT_COMMIT=unknown
 COPY package.json /src/package.json
 COPY CHANGELOG.md /src/CHANGELOG.md
 COPY CajunLyrics.Web/package*.json ./
 RUN npm ci
 COPY CajunLyrics.Web .
 RUN APP_VERSION="$(node -p "require('/src/package.json').version")" && \
+    APP_COMMIT="${APP_COMMIT:-${RENDER_GIT_COMMIT}}" && \
     VITE_APP_VERSION="${APP_VERSION}+sha.${APP_COMMIT}" npm run build
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
