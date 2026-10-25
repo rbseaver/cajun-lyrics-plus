@@ -4,6 +4,11 @@ This is a running project-context log for LLM sessions, not a replacement for th
 
 When finishing meaningful repository work, add a concise, factual entry at the top. Include relevant files, decisions, and validation results; preserve older entries. Do not include secrets or sensitive data.
 
+## 2026-10-25 — Include release identity in Actions run names
+
+- Updated `.github/workflows/ci.yml` so tag-triggered runs are named with the tag, full commit SHA, and workflow run number (for example, `v1.5.4-<full-sha>.42`). Other runs retain the `CI #<run number>` name.
+- No job behavior or GitLab CI configuration changed.
+
 ## 2026-10-25 — Validate API search inputs
 
 - Added controller validation for blank search criteria, blank artist/title in direct lyric lookup, nonpositive lyric IDs, unsupported language filters, and language lists longer than the supported set. Library-level custom language support remains unchanged.
