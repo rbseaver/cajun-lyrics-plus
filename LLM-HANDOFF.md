@@ -4,6 +4,11 @@ This is a running project-context log for LLM sessions, not a replacement for th
 
 When finishing meaningful repository work, add a concise, factual entry at the top. Include relevant files, decisions, and validation results; preserve older entries. Do not include secrets or sensitive data.
 
+## 2026-10-25 — Validate API search inputs
+
+- Added controller validation for blank search criteria, blank artist/title in direct lyric lookup, nonpositive lyric IDs, unsupported language filters, and language lists longer than the supported set. Library-level custom language support remains unchanged.
+- Added unit and HTTP integration coverage. Validation passed: 68 unit tests, 20 non-live integration tests, and `git diff --check`.
+
 ## 2026-10-25 — Add GitHub Actions CI
 
 - Added `.github/workflows/ci.yml` alongside the unchanged `.gitlab-ci.yml`. Actions runs on pushes to `main`, tags, and pull requests targeting `main`, with frontend, unit, hermetic integration, Docker build, and tag-only release gates.

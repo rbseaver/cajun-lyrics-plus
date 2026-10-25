@@ -76,6 +76,65 @@ public class WhenCallingController
         result.Value.Should().BeEquivalentTo(expectedResult);
     }
 
+    [TestCase(null, null)]
+    [TestCase("", " ")]
+    [TestCase(" ", null)]
+    public async Task ShouldRejectSearchWithoutAnArtistOrTitle(string? artist, string? title)
+    {
+        var result = await controller.Search(artist, title, null);
+
+        result.Should().BeOfType<BadRequestObjectResult>();
+        await cajunLyricsServiceMock.DidNotReceive()
+            .GetSearchResultsAsync(Arg.Any<LyricSearchRequest>());
+    }
+
+    [Test]
+    public async Task ShouldRejectSearchWithUnsupportedLanguage()
+    {
+        var result = await controller.Search("artist", null, [LyricLanguage.FromCode("unsupported")]);
+
+        result.Should().BeOfType<BadRequestObjectResult>();
+        await cajunLyricsServiceMock.DidNotReceive()
+            .GetSearchResultsAsync(Arg.Any<LyricSearchRequest>());
+    }
+
+    [Test]
+    public async Task ShouldRejectSearchWithTooManyLanguages()
+    {
+        var languages = Enumerable.Repeat(LyricLanguage.English, LyricLanguage.All.Count + 1).ToList();
+
+        var result = await controller.Search("artist", null, languages);
+
+        result.Should().BeOfType<BadRequestObjectResult>();
+        await cajunLyricsServiceMock.DidNotReceive()
+            .GetSearchResultsAsync(Arg.Any<LyricSearchRequest>());
+    }
+
+    [TestCase(" ", "title", null)]
+    [TestCase("artist", " ", null)]
+    [TestCase("artist", "title", 0)]
+    [TestCase("artist", "title", -1)]
+    public async Task ShouldRejectLyricRequestsWithInvalidRequiredValues(string? artist, string? title, int? id)
+    {
+        var result = await controller.Get(artist, title, null, id);
+
+        result.Should().BeOfType<BadRequestObjectResult>();
+        await cajunLyricsServiceMock.DidNotReceive()
+            .GetSongLyricsAsync(Arg.Any<LyricSearchRequest>());
+        await cajunLyricsServiceMock.DidNotReceive()
+            .GetSongLyricsByIdAsync(Arg.Any<int>(), Arg.Any<IReadOnlyList<LyricLanguage>?>());
+    }
+
+    [Test]
+    public async Task ShouldRejectLyricRequestWithUnsupportedLanguage()
+    {
+        var result = await controller.Get("artist", "title", [LyricLanguage.FromCode("unsupported")]);
+
+        result.Should().BeOfType<BadRequestObjectResult>();
+        await cajunLyricsServiceMock.DidNotReceive()
+            .GetSongLyricsAsync(Arg.Any<LyricSearchRequest>());
+    }
+
     [Test]
     public async Task ShouldReturn404WhenLyricIsNull()
     {

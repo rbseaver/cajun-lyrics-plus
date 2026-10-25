@@ -52,6 +52,30 @@ public class WhenCallingLyricsEndpoint
     }
 
     [Test]
+    public async Task ShouldRejectSearchWithoutCriteria()
+    {
+        var response = await client.GetAsync("/api/Lyrics/search");
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Test]
+    public async Task ShouldRejectUnsupportedLanguageFilter()
+    {
+        var response = await client.GetAsync("/api/Lyrics/search?artist=Zachary%20Richard&language=unsupported");
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Test]
+    public async Task ShouldRejectNonPositiveLyricId()
+    {
+        var response = await client.GetAsync("/api/Lyrics/lyric?id=0");
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Test]
     public async Task ShouldNotRedirectToHttpsOutsideDevelopment()
     {
         Environment.SetEnvironmentVariable("ASPNETCORE_HTTPS_PORT", "443");

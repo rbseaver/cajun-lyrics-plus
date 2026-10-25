@@ -12,9 +12,14 @@ namespace CajunLyrics.Api.Controllers
         [Route("lyric")]
         public async Task<IActionResult> Get([FromQuery] string? artist, [FromQuery] string? title, [FromQuery] List<LyricLanguage>? language, [FromQuery] int? id = null)
         {
-            if (id is null && (artist is null || title is null))
+            if (id.HasValue ? id.Value <= 0 : string.IsNullOrWhiteSpace(artist) || string.IsNullOrWhiteSpace(title))
             {
-                return BadRequest("Provide a lyric ID or both an artist and title.");
+                return BadRequest("Provide a positive lyric ID or both a non-empty artist and title.");
+            }
+
+            if (!HasValidLanguages(language))
+            {
+                return BadRequest($"Provide only supported language filters, with no more than {LyricLanguage.All.Count} entries.");
             }
 
             var request = new LyricSearchRequest
@@ -46,6 +51,16 @@ namespace CajunLyrics.Api.Controllers
         [Route("search")]
         public async Task<IActionResult> Search([FromQuery] string? artist, [FromQuery] string? title, [FromQuery] List<LyricLanguage>? language)
         {
+            if (string.IsNullOrWhiteSpace(artist) && string.IsNullOrWhiteSpace(title))
+            {
+                return BadRequest("Provide an artist, a title, or both.");
+            }
+
+            if (!HasValidLanguages(language))
+            {
+                return BadRequest($"Provide only supported language filters, with no more than {LyricLanguage.All.Count} entries.");
+            }
+
             var request = new LyricSearchRequest
             {
                 Artist = artist,
@@ -67,6 +82,15 @@ namespace CajunLyrics.Api.Controllers
             {
                 return StatusCode(500, "An error occurred while attempting to search lyrics.");
             }
+        }
+
+        private static bool HasValidLanguages(IReadOnlyCollection<LyricLanguage>? languages)
+        {
+            return languages is null
+                || (languages.Count <= LyricLanguage.All.Count
+                    && languages.All(language => language is not null
+                        && LyricLanguage.All.Any(supported =>
+                            string.Equals(supported.Code, language.Code, StringComparison.OrdinalIgnoreCase))));
         }
     }
 }
