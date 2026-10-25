@@ -4,6 +4,12 @@ This is a running project-context log for LLM sessions, not a replacement for th
 
 When finishing meaningful repository work, add a concise, factual entry at the top. Include relevant files, decisions, and validation results; preserve older entries. Do not include secrets or sensitive data.
 
+## 2026-10-25 — Add GitHub Actions CI
+
+- Added `.github/workflows/ci.yml` alongside the unchanged `.gitlab-ci.yml`. Actions runs on pushes to `main`, tags, and pull requests targeting `main`, with frontend, unit, hermetic integration, Docker build, and tag-only release gates.
+- Kept the live-upstream integration canary excluded and uploaded test/coverage results as seven-day artifacts. Updated `.github/copilot-instructions.md` to document both CI systems.
+- Validation passed: workflow YAML and gate assertions, 24 frontend tests, 58 .NET unit tests, 17 non-live integration tests, and the Docker image build.
+
 ## 2026-10-25 — Create a durable LLM handoff log
 
 - Added this tracked log and linked it from `AGENTS.md` and `.github/copilot-instructions.md`.

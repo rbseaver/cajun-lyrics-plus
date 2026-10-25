@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "*"
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  frontend_tests:
+    name: Frontend tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: CajunLyrics.Web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: CajunLyrics.Web/package-lock.json
+      - run: npm ci
+      - run: npm test -- --run --coverage
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: frontend-coverage
+          path: CajunLyrics.Web/coverage/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  unit_tests:
+    name: .NET unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - run: dotnet test CajunLyrics.Tests.Unit/CajunLyrics.Tests.Unit.csproj --collect:"XPlat Code Coverage" --logger "trx;LogFileName=unit-tests.trx" --results-directory test-results
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unit-test-results
+          path: test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  integration_tests:
+    name: .NET integration tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - run: dotnet test CajunLyrics.Tests.Integration/CajunLyrics.Tests.Integration.csproj --filter "TestCategory!=Live" --logger "trx;LogFileName=integration-tests.trx" --results-directory test-results
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: integration-test-results
+          path: test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  image_build:
+    name: Docker image build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build --file CajunLyrics.Api/Dockerfile --tag cajunlyrics-plus:ci .
+
+  release_gate:
+    name: Release gate
+    if: startsWith(github.ref, 'refs/tags/')
+    needs:
+      - frontend_tests
+      - unit_tests
+      - integration_tests
+      - image_build
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Release tag ${GITHUB_REF_NAME} passed the test and image build gates."
