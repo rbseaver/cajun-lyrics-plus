@@ -41,7 +41,10 @@ describe('App', () => {
 
     render(<App />);
 
-    expect(screen.getByText(`Version ${version}`)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: `Version ${version}` })).toHaveAttribute(
+      'href',
+      'https://github.com/rbseaver/cajun-lyrics-plus/blob/main/CHANGELOG.md',
+    );
     vi.unstubAllEnvs();
   });
 

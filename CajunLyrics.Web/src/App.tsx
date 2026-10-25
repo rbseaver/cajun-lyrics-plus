@@ -84,7 +84,14 @@ function App() {
           <a href="https://www.cajunlyrics.com" target="_blank" rel="noopener noreferrer">
             CajunLyrics.com
           </a>
-          <span className="app-footer__version">Version {appVersion}</span>
+          <a
+            className="app-footer__version"
+            href="https://github.com/rbseaver/cajun-lyrics-plus/blob/main/CHANGELOG.md"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Version {appVersion}
+          </a>
         </p>
       </footer>
     </div>

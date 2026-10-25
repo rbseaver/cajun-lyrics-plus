@@ -4,6 +4,12 @@ This is a running project-context log for LLM sessions, not a replacement for th
 
 When finishing meaningful repository work, add a concise, factual entry at the top. Include relevant files, decisions, and validation results; preserve older entries. Do not include secrets or sensitive data.
 
+## 2026-10-25 — Link footer version to changelog
+
+- Made the footer's version label link to the repository's `main/CHANGELOG.md` on GitHub, which works from the deployed app.
+- Consolidated the legacy `0.0.0` feature and bug-fix entries under the `1.0.0` release and removed the standalone `0.0.0` section.
+- Validation passed: 25 frontend tests, lint, production build, and `git diff --check`.
+
 ## 2026-10-25 — Show release version in the footer
 
 - Added a footer version label sourced from Vite's `VITE_APP_VERSION`, with `development` for non-image local frontend builds. The Dockerfile composes the root package version and full CI commit SHA as SemVer build metadata (`1.5.4+sha.<full-sha>`).
