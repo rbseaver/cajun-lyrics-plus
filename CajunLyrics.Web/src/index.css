@@ -4,22 +4,25 @@
    Design Tokens
    ============================================================ */
 :root {
-  /* Palette — deep indigo/midnight with warm amber accents */
-  --color-bg-base:        #0d0f1a;
-  --color-bg-surface:     #13162a;
-  --color-bg-elevated:    #1a1e35;
-  --color-bg-glass:       rgba(26, 30, 53, 0.7);
+  /* Palette — Acadian midnight with Atlantic blue and aged gold accents */
+  --color-bg-base:        #08111F;
+  --color-bg-surface:     #0E1A2F;
+  --color-bg-elevated:    #13233C;
+  --color-bg-card-hover:  #182C4A;
 
   --color-border:         rgba(255, 255, 255, 0.08);
-  --color-border-focus:   rgba(251, 191, 36, 0.6);
+  --color-border-focus:   rgba(103, 168, 216, 0.65);
 
-  --color-accent:         #f59e0b;   /* amber-400 */
-  --color-accent-bright:  #fbbf24;   /* amber-300 */
-  --color-accent-dim:     rgba(245, 158, 11, 0.15);
+  --color-accent:         #67A8D8;
+  --color-accent-bright:  #7CB8E3;
+  --color-accent-dim:     rgba(103, 168, 216, 0.14);
+  --color-gold:           #D6B36A;
+  --color-gold-hover:     #E2C27D;
+  --color-gold-dim:       rgba(214, 179, 106, 0.14);
 
-  --color-text-primary:   #f0f0f8;
-  --color-text-secondary: #9ba3c0;
-  --color-text-muted:     #5a6080;
+  --color-text-primary:   #F4F7FB;
+  --color-text-secondary: #AEBDD1;
+  --color-text-muted:     #7D8BA0;
 
   --color-error:          #f87171;
   --color-error-bg:       rgba(248, 113, 113, 0.1);
@@ -39,7 +42,7 @@
   --shadow-sm:  0 2px 8px rgba(0, 0, 0, 0.35);
   --shadow-md:  0 8px 32px rgba(0, 0, 0, 0.5);
   --shadow-lg:  0 20px 60px rgba(0, 0, 0, 0.6);
-  --shadow-accent: 0 0 24px rgba(245, 158, 11, 0.25);
+  --shadow-accent: 0 0 18px rgba(103, 168, 216, 0.16);
 
   /* Transitions */
   --transition-fast:   150ms ease;
@@ -91,8 +94,8 @@ body::before {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(ellipse 70% 50% at 20% 10%, rgba(99, 102, 241, 0.12) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at 80% 85%, rgba(245, 158, 11, 0.08) 0%, transparent 60%);
+    radial-gradient(ellipse 70% 50% at 20% 10%, rgba(103, 168, 216, 0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 85%, rgba(103, 168, 216, 0.05) 0%, transparent 60%);
   pointer-events: none;
   z-index: 0;
 }
@@ -131,8 +134,8 @@ body::before {
 }
 
 .app-header__logo-icon {
-  color: var(--color-accent);
-  filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.5));
+  color: var(--color-gold);
+  filter: drop-shadow(0 0 8px rgba(214, 179, 106, 0.4));
   animation: pulse-glow 3s ease-in-out infinite;
 }
 
@@ -140,7 +143,7 @@ body::before {
   font-size: clamp(1.9rem, 5vw, 3rem);
   font-weight: 800;
   letter-spacing: -0.03em;
-  background: linear-gradient(135deg, var(--color-text-primary) 30%, var(--color-accent-bright) 100%);
+  background: linear-gradient(135deg, var(--color-text-primary) 30%, var(--color-gold) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -168,7 +171,7 @@ body::before {
    Search Form
    ============================================================ */
 .search-form {
-  background: var(--color-bg-glass);
+  background: var(--color-bg-surface);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--color-border);
@@ -266,13 +269,13 @@ body::before {
 
 .field-input:focus {
   border-color: var(--color-border-focus);
-  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.12);
+  box-shadow: 0 0 0 3px rgba(103, 168, 216, 0.16);
   background: rgba(255, 255, 255, 0.06);
 }
 
 .field-select {
   cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ba3c0' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23AEBDD1' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 0.85rem center;
   padding-right: 2.5rem;
@@ -293,21 +296,17 @@ body::before {
   font-size: 1rem;
   font-weight: 600;
   color: var(--color-bg-base);
-  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-bright) 100%);
+  background: var(--color-accent);
   border: none;
   border-radius: var(--radius-md);
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-fast);
-  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.35);
+  transition: background var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-fast);
+  box-shadow: 0 2px 10px rgba(103, 168, 216, 0.16);
   letter-spacing: 0.02em;
 }
 
 .search-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(245, 158, 11, 0.5);
-}
-
-.search-button:active:not(:disabled) {
-  transform: translateY(0);
+  background: var(--color-accent-bright);
+  box-shadow: 0 4px 14px rgba(103, 168, 216, 0.22);
 }
 
 .search-button:disabled {
@@ -326,7 +325,7 @@ body::before {
   display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2.5px solid rgba(13, 15, 26, 0.3);
+  border: 2.5px solid rgba(8, 17, 31, 0.3);
   border-top-color: var(--color-bg-base);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
@@ -360,20 +359,20 @@ body::before {
   padding: 0.85rem 1rem;
   color: var(--color-text-primary);
   text-align: left;
-  background: var(--color-bg-glass);
+  background: var(--color-bg-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   transition: background var(--transition-fast), border-color var(--transition-fast);
 }
 
 .search-results__button:hover {
-  background: var(--color-bg-elevated);
+  background: var(--color-bg-card-hover);
   border-color: var(--color-border-focus);
 }
 
 .search-results__artist {
   flex-shrink: 0;
-  color: var(--color-accent-bright);
+  color: var(--color-gold);
   font-weight: 600;
 }
 
@@ -387,7 +386,7 @@ body::before {
    Lyric Card
    ============================================================ */
 .lyric-card {
-  background: var(--color-bg-glass);
+  background: var(--color-bg-elevated);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--color-border);
@@ -403,7 +402,7 @@ body::before {
   justify-content: space-between;
   gap: 1rem;
   padding: 1.75rem 2rem 1.5rem;
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(103, 168, 216, 0.06) 0%, transparent 60%);
 }
 
 .lyric-card__meta {
@@ -418,22 +417,22 @@ body::before {
   margin-bottom: 0.3rem;
 }
 
-.lyric-card__artist-link,
-.lyric-card__artist {
+.lyric-card__artist-link {
   font-size: 1rem;
   font-weight: 500;
   color: var(--color-accent-bright);
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-}
-
-.lyric-card__artist-link {
   transition: color var(--transition-fast), gap var(--transition-fast);
 }
 .lyric-card__artist-link:hover { gap: 0.5rem; }
 
-.lyric-card__artist { color: var(--color-text-secondary); }
+.lyric-card__artist {
+  color: var(--color-gold);
+  font-size: 1rem;
+  font-weight: 500;
+}
 
 .lyric-card__language {
   display: flex;
@@ -444,9 +443,9 @@ body::before {
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.03em;
-  color: var(--color-accent-bright);
-  background: var(--color-accent-dim);
-  border: 1px solid rgba(245, 158, 11, 0.25);
+  color: var(--color-gold-hover);
+  background: var(--color-gold-dim);
+  border: 1px solid rgba(214, 179, 106, 0.25);
   border-radius: 999px;
   padding: 0.2rem 0.65rem;
 }
@@ -465,8 +464,8 @@ body::before {
   letter-spacing: 0.02em;
 }
 .lyric-card__source-link:hover {
-  color: var(--color-accent-bright);
-  background: var(--color-accent-dim);
+  color: var(--color-gold-hover);
+  background: var(--color-gold-dim);
   border-color: var(--color-border-focus);
 }
 
@@ -516,7 +515,7 @@ body::before {
   opacity: 0.7;
   margin-bottom: 1.5rem;
   animation: float 4s ease-in-out infinite;
-  filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.35));
+  filter: drop-shadow(0 0 12px rgba(103, 168, 216, 0.2));
 }
 
 .empty-state__heading {
@@ -548,7 +547,7 @@ body::before {
   font-weight: 500;
   color: var(--color-accent-bright);
   background: var(--color-accent-dim);
-  border: 1px solid rgba(245, 158, 11, 0.25);
+  border: 1px solid rgba(103, 168, 216, 0.25);
   border-radius: 999px;
   padding: 0.35rem 0.9rem;
 }
@@ -613,8 +612,8 @@ body::before {
 }
 
 @keyframes pulse-glow {
-  0%, 100% { filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.5)); }
-  50%       { filter: drop-shadow(0 0 18px rgba(245, 158, 11, 0.8)); }
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(214, 179, 106, 0.4)); }
+  50%       { filter: drop-shadow(0 0 18px rgba(214, 179, 106, 0.65)); }
 }
 
 @keyframes float {
