@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.4](https://github.com/rbseaver/cajun-lyrics-plus/compare/v1.5.3...v1.5.4) (2026-10-25)
+
+### Bug Fixes
+
+* **api:** validate search request inputs ([e0bd3e8](https://github.com/rbseaver/cajun-lyrics-plus/commit/e0bd3e83d42af96e1524aa2fde2f76ef0bfe1c22))
+
 ## [1.5.3](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/compare/v1.5.2...v1.5.3) (2026-10-25)
 
 ### Bug Fixes
