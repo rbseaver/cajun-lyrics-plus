@@ -1,4 +1,7 @@
-FROM node:22-alpine AS frontend-build
+FROM node:22-bookworm-slim AS frontend-build
+RUN apt-get update \
+    && apt-get upgrade -y --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /src/CajunLyrics.Web
 ARG APP_COMMIT
 ARG RENDER_GIT_COMMIT=unknown
@@ -12,6 +15,9 @@ RUN APP_VERSION="$(node -p "require('/src/package.json').version")" && \
     VITE_APP_VERSION="${APP_VERSION}+sha.${APP_COMMIT}" npm run build
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+RUN apt-get update \
+    && apt-get upgrade -y --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["CajunLyrics.Api/CajunLyrics.Api.csproj", "CajunLyrics.Api/"]
@@ -23,6 +29,9 @@ WORKDIR "/src/CajunLyrics.Api"
 RUN dotnet publish "./CajunLyrics.Api.csproj" -c ${BUILD_CONFIGURATION} -o /app/publish /p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
+RUN apt-get update \
+    && apt-get upgrade -y --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 ENV ASPNETCORE_ENVIRONMENT=Docker
 ENV ASPNETCORE_URLS=http://+:8080
