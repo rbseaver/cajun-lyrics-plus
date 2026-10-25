@@ -1,6 +1,6 @@
 name: CI
 
-run-name: "${{ github.ref_type == 'tag' && format('{0}-{1}.{2}', github.ref_name, github.sha, github.run_number) || format('CI #{0}', github.run_number) }}"
+run-name: "${{ github.ref_type == 'tag' && format('{0}-{1}', github.ref_name, github.sha) || 'CI' }}"
 
 on:
   push:

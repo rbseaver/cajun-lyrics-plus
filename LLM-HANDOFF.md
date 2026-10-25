@@ -4,9 +4,9 @@ This is a running project-context log for LLM sessions, not a replacement for th
 
 When finishing meaningful repository work, add a concise, factual entry at the top. Include relevant files, decisions, and validation results; preserve older entries. Do not include secrets or sensitive data.
 
-## 2026-10-25 — Include release identity in Actions run names
+## 2026-10-25 — Avoid duplicate Actions run numbers
 
-- Updated `.github/workflows/ci.yml` so tag-triggered runs are named with the tag, full commit SHA, and workflow run number (for example, `v1.5.4-<full-sha>.42`). Other runs retain the `CI #<run number>` name.
+- Updated `.github/workflows/ci.yml` so tag-triggered custom titles contain the tag and full commit SHA, while other runs use `CI`. GitHub appends the unique workflow run number to the displayed title, so it is intentionally omitted from `run-name` to avoid duplication.
 - No job behavior or GitLab CI configuration changed.
 
 ## 2026-10-25 — Validate API search inputs
