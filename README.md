@@ -3,6 +3,28 @@
 [![pipeline status](https://gitlab.com/rbseaver/cajun-lyrics-plus/badges/main/pipeline.svg)](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/pipelines)
 [![coverage](https://gitlab.com/rbseaver/cajun-lyrics-plus/badges/main/coverage.svg)](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/jobs)
 
+## Architecture
+
+Two apps in one repo, deployed as a single unit: the browser gets the built React SPA and its `/api` calls from the same origin, and the API calls out to the upstream CajunLyrics.com service (which answers in XML).
+
+```mermaid
+flowchart LR
+    B["Browser"]
+    subgraph C["Single container — docker compose up"]
+        S["Static SPA files<br/>(wwwroot)"]
+        A["ASP.NET Core API<br/>(Kestrel)"]
+    end
+    U["api.cajunlyrics.com<br/>(XML)"]
+
+    B -->|"GET /"| S
+    B -->|"GET /api/Lyrics/..."| A
+    A -->|"HTTPS request"| U
+    U -->|"XML bytes"| A
+    A -->|"JSON response"| B
+```
+
+Project layering, local dev wiring, and test tiers are documented in [ARCHITECTURE.md](ARCHITECTURE.md).
+
 ## Local Docker monolith
 
 This repo is set up as a single Dockerized app: the backend serves the built frontend as static files, so you can run the whole project locally from one container.
