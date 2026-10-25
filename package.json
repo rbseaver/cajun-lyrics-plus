@@ -1,7 +1,7 @@
 {
   "name": "cajun-lyrics-plus",
   "private": true,
-  "version": "1.5.1",
+  "version": "1.5.2",
   "scripts": {
     "dev": "concurrently -k -n api,web \"dotnet run --project CajunLyrics.Api\" \"npm --prefix CajunLyrics.Web run dev\"",
     "release": "release-it",

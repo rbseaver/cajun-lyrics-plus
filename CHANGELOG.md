@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.5.2](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/compare/v1.5.1...v1.5.2) (2026-10-25)
+
+### Bug Fixes
+
+* **web:** proxy api requests from vite preview ([9548d07](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/commit/9548d0732243020a2ebbab332f0f6f3e13d0ff64))
+
 ## [1.5.1](https://gitlab.com/rbseaver/cajun-lyrics-plus/-/compare/v1.5.0...v1.5.1) (2026-10-24)
 
 ### Bug Fixes
