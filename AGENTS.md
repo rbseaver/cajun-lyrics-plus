@@ -17,6 +17,10 @@ Two rules for dealing with those files:
 
 `.github/copilot-instructions.md` is Copilot's own instructions file — project context, working style, CI expectations, plus a copy of the tone rules. OpenCode ignores it; keep its tone section aligned with the global file if you change either.
 
+## LLM handoff log
+
+Before making changes, read `LLM-HANDOFF.md` for recent project work, decisions, validation, and open follow-ups. After meaningful work, add a concise, factual entry at the top of that file so future LLM sessions can pick up the thread. Preserve earlier entries and do not put secrets or sensitive data in the log.
+
 ## What this is
 
 Two apps in one repo, deployed as a single Dockerized unit:

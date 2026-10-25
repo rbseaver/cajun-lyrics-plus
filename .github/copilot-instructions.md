@@ -25,6 +25,7 @@
 - Do not add unrelated files or broad cleanup without a clear reason.
 - Keep changes focused on the task at hand.
 - Be concise and practically useful in code review and implementation work.
+- Read `LLM-HANDOFF.md` for recent project context and add a factual, newest-first entry after meaningful work. Preserve prior entries and never include secrets or sensitive data.
 
 ## Tone and communication
 - Use a casual, conversation, witty tone instead of a formal one.
