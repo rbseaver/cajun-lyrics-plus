@@ -76,6 +76,26 @@ public class WhenCallingLyricsEndpoint
     }
 
     [Test]
+    public async Task ShouldRejectTranslationWithoutText()
+    {
+        var response = await client.PostAsJsonAsync(
+            "/api/Translation/translate",
+            new { text = " " });
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Test]
+    public async Task ShouldRejectTranslationTextAboveTheSupportedLimit()
+    {
+        var response = await client.PostAsJsonAsync(
+            "/api/Translation/translate",
+            new { text = new string('a', 5001) });
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Test]
     public async Task ShouldNotRedirectToHttpsOutsideDevelopment()
     {
         Environment.SetEnvironmentVariable("ASPNETCORE_HTTPS_PORT", "443");
@@ -218,6 +238,7 @@ public class WhenCallingLyricsEndpoint
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         var content = await response.Content.ReadAsStringAsync();
         content.Should().Contain("/api/Lyrics/lyric");
+        content.Should().Contain("/api/Translation/translate");
     }
 
     [Test]

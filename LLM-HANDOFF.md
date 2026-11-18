@@ -4,6 +4,22 @@ This is a running project-context log for LLM sessions, not a replacement for th
 
 When finishing meaningful repository work, add a concise, factual entry at the top. Include relevant files, decisions, and validation results; preserve older entries. Do not include secrets or sensitive data.
 
+## 2026-11-18 — Position translation popover by selected text
+
+- Replaced the fixed bottom-right translation popover placement with selection-anchored positioning. The popover flips above the selection or clamps to the viewport when space is limited.
+- Added a LyricCard regression assertion for positioning relative to the selected lyric range. Validation passed: 28 frontend tests, lint, production build, and `git diff --check`.
+
+## 2026-11-17 — Pass DeepL key into Docker Compose
+
+- Updated `docker-compose.yml` to pass the host's `DEEPL_API_KEY` into the API container without adding the key to the image or repository.
+- Validation passed: `docker compose config --quiet` and `git diff --check`.
+
+## 2026-11-17 — Translate selected lyric text with DeepL
+
+- Added an explicit selection-to-translate popover for lyric text, defaulting to English and marking results as machine translations. Selection is capped at 5,000 characters in both the UI and API.
+- Added `POST /api/Translation/translate` and a DeepL Free API client; the API reads `DEEPL_API_KEY` from its process environment, so the key is never sent to the browser. The app starts without a key and returns 503 for translation until configured.
+- Validation passed: 77 backend unit tests, 22 non-live integration tests, 28 frontend tests, frontend lint and production build, and `git diff --check`. No live DeepL request was made. Integration test restore still reports the existing moderate NU1902 advisory for `Microsoft.AspNetCore.WebUtilities` 2.3.0.
+
 ## 2026-10-25 — Use Render's deployed commit SHA
 
 - The Dockerfile now falls back to Render's build-provided `RENDER_GIT_COMMIT` when `APP_COMMIT` is unset, preserving the existing GitLab CI argument. GitHub Actions now builds with the Render argument name to cover that path in CI.

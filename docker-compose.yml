@@ -9,5 +9,6 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Docker
       ASPNETCORE_URLS: http://+:8080
+      DEEPL_API_KEY: ${DEEPL_API_KEY:-}
     ports:
       - "8080:8080"

@@ -24,6 +24,10 @@ builder.Services.AddCors(options =>
 });
 // Register HttpClientOptions as configuration management for ILyricsClient
 builder.Services.Configure<HttpClientOptions>(builder.Configuration.GetSection("HttpClient"));
+builder.Services.Configure<DeepLOptions>(options =>
+{
+    options.ApiKey = builder.Configuration["DEEPL_API_KEY"];
+});
 
 builder.Services.AddHttpClient(nameof(CajunLyricsClient), (sp, client) =>
 {
@@ -34,6 +38,11 @@ builder.Services.AddHttpClient(nameof(CajunLyricsClient), (sp, client) =>
 
 builder.Services.AddScoped<ILyricsService, CajunLyricsService>();
 builder.Services.AddScoped<ILyricsClient, CajunLyricsClient>();
+builder.Services.AddHttpClient<ITranslationService, DeepLTranslationService>(client =>
+{
+    client.BaseAddress = new Uri("https://api-free.deepl.com");
+    client.Timeout = TimeSpan.FromSeconds(15);
+});
 
 // Probe endpoint for container hosts; kept as a self-check so a flaky
 // upstream never causes the platform to restart-loop the app.

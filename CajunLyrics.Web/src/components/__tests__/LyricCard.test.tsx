@@ -1,6 +1,7 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { LyricCard } from '../LyricCard';
 import type { LyricResult } from '../../types/lyrics';
+import userEvent from '@testing-library/user-event';
 
 describe('LyricCard', () => {
   const baseResult: LyricResult = {
@@ -38,5 +39,41 @@ describe('LyricCard', () => {
     render(<LyricCard result={{ ...baseResult, language: undefined }} />);
 
     expect(screen.queryByText(/french|english/i)).not.toBeInTheDocument();
+  });
+
+  it('translates selected lyric text into English when requested', async () => {
+    const user = userEvent.setup();
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ translation: 'Ten years, ten years' }),
+      }),
+    );
+    render(<LyricCard result={baseResult} />);
+
+    const lyricLine = screen.getByText('Dix ans, dix ans');
+    const range = document.createRange();
+    range.selectNodeContents(lyricLine);
+    Object.assign(range, { getBoundingClientRect: () => new DOMRect(120, 220, 80, 20) });
+    const selection = window.getSelection();
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+    fireEvent(document, new Event('selectionchange'));
+
+    expect(await screen.findByRole('complementary', { name: 'Translation' })).toHaveStyle({
+      left: '120px',
+      top: '248px',
+    });
+
+    await user.click(await screen.findByRole('button', { name: /translate selection/i }));
+
+    expect(await screen.findByText('Ten years, ten years')).toBeInTheDocument();
+    expect(screen.getByText(/machine translation/i)).toBeInTheDocument();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    window.getSelection()?.removeAllRanges();
   });
 });
