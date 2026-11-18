@@ -4,6 +4,11 @@ This is a running project-context log for LLM sessions, not a replacement for th
 
 When finishing meaningful repository work, add a concise, factual entry at the top. Include relevant files, decisions, and validation results; preserve older entries. Do not include secrets or sensitive data.
 
+## 2026-11-18 — Render the changelog on its own page
+
+- Replaced the footer's expandable changelog with a `/changelog` page that renders the full markdown document in normal page flow. The FrancoLyrics header link and a prominent “Back to lyrics” link return to `/`.
+- Added route and navigation regression tests. Validation passed: 29 frontend tests, lint, production build, and `git diff --check`.
+
 ## 2026-11-18 — Position translation popover by selected text
 
 - Replaced the fixed bottom-right translation popover placement with selection-anchored positioning. The popover flips above the selection or clamps to the viewport when space is limited.

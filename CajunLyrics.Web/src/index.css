@@ -654,39 +654,57 @@ body::before {
 }
 .app-footer a:hover { color: var(--color-accent-bright); }
 
-.app-footer__changelog {
-  margin: 0 auto;
-  max-width: 48rem;
-}
-
 .app-footer__version {
   display: inline-block;
   margin-top: 0.35rem;
-  cursor: pointer;
 }
 
-.app-footer__changelog-content {
-  max-height: 60vh;
-  overflow-y: auto;
-  margin-top: 1rem;
-  padding: 1rem;
+.changelog-page__home {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding: 0.6rem 1rem;
+  color: var(--color-accent-bright);
+  font-weight: 600;
+  border: 1px solid var(--color-border-focus);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-surface);
+}
+
+.changelog-page__home:hover {
+  color: var(--color-text-primary);
+  background: var(--color-bg-elevated);
+}
+
+.changelog-page__content {
+  padding: 1.5rem;
   text-align: left;
   border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
-  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-surface);
 }
 
-.app-footer__changelog-content h1,
-.app-footer__changelog-content h2,
-.app-footer__changelog-content h3 {
+.changelog-page__content h1,
+.changelog-page__content h2,
+.changelog-page__content h3 {
   margin: 1.25rem 0 0.5rem;
 }
 
-.app-footer__changelog-content h1:first-child {
+.changelog-page__content h1:first-child {
   margin-top: 0;
 }
 
-.app-footer__changelog-content a {
+.changelog-page__content ul {
+  margin: 0.5rem 0 1rem;
+  padding-left: 1.5rem;
+  list-style: disc;
+}
+
+.changelog-page__content li {
+  margin: 0.25rem 0;
+}
+
+.changelog-page__content a {
   color: var(--color-accent-bright);
 }
 

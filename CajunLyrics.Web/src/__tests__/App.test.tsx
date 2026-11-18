@@ -1,5 +1,4 @@
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import App from '../App';
 import { useLyricSearch } from '../hooks/useLyricSearch';
 
@@ -8,6 +7,11 @@ vi.mock('../hooks/useLyricSearch', () => ({
 }));
 
 describe('App', () => {
+  afterEach(() => {
+    window.history.replaceState({}, '', '/');
+    vi.unstubAllEnvs();
+  });
+
   it('renders the empty state when the app is idle', () => {
     vi.mocked(useLyricSearch).mockReturnValue({
       status: 'idle',
@@ -26,8 +30,7 @@ describe('App', () => {
     expect(screen.getByText(/find your lyrics/i)).toBeInTheDocument();
   });
 
-  it('opens the rendered changelog from the footer version', async () => {
-    const user = userEvent.setup();
+  it('links the footer version to the standalone changelog page', () => {
     const version = '1.5.4+sha.0123456789abcdef0123456789abcdef01234567';
     vi.stubEnv('VITE_APP_VERSION', version);
     vi.mocked(useLyricSearch).mockReturnValue({
@@ -43,9 +46,32 @@ describe('App', () => {
 
     render(<App />);
 
-    await user.click(screen.getByText(`Version ${version}`));
-    expect(screen.getByRole('heading', { name: /^1\.6\.0/ })).toBeInTheDocument();
-    vi.unstubAllEnvs();
+    expect(screen.getByRole('link', { name: `Version ${version}` })).toHaveAttribute(
+      'href',
+      '/changelog',
+    );
+    expect(screen.queryByRole('heading', { name: /^1\.6\.0/ })).not.toBeInTheDocument();
+  });
+
+  it('renders the changelog as a page with navigation back home', () => {
+    window.history.replaceState({}, '', '/changelog');
+    vi.mocked(useLyricSearch).mockReturnValue({
+      status: 'idle',
+      result: null,
+      results: [],
+      errorMessage: null,
+      search: vi.fn(),
+      searchResults: vi.fn(),
+      selectResult: vi.fn(),
+      reset: vi.fn(),
+    });
+
+    render(<App />);
+
+    expect(screen.getByRole('heading', { name: 'Changelog' })).toBeInTheDocument();
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
+    expect(screen.getByRole('link', { name: 'Back to lyrics' })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: 'FrancoLyrics home' })).toHaveAttribute('href', '/');
   });
 
   it('renders lyric results when the search succeeds', () => {
