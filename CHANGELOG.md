@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.7.0](https://github.com/rbseaver/cajun-lyrics-plus/compare/v1.6.0...v1.7.0) (2026-11-18)
+
+### Features
+
+* add DeepL lyric translation ([dcb9542](https://github.com/rbseaver/cajun-lyrics-plus/commit/dcb95425bfb38f7158558d6d5dc1790ce6c1ca35))
+* **web:** link footer version to changelog ([2896141](https://github.com/rbseaver/cajun-lyrics-plus/commit/2896141ff56a63b8a85e2369a86e6aeba6c49a0a))
+* **web:** render changelog in app ([de80264](https://github.com/rbseaver/cajun-lyrics-plus/commit/de80264054c55108d63577ff614534278ee37d89))
+
+### Bug Fixes
+
+* **web:** use Render commit SHA in footer ([99ca182](https://github.com/rbseaver/cajun-lyrics-plus/commit/99ca18206d7c3b3fcc97f58a5f1230381b345d6a))
+
 ## [1.6.0](https://github.com/rbseaver/cajun-lyrics-plus/compare/v1.5.4...v1.6.0) (2026-10-25)
 
 ### Features
